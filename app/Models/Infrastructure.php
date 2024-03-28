@@ -12,7 +12,7 @@ class Infrastructure extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'ville', 'cite', 'description', 'gestionnaire_id', 'infrastructureable_id', 'infrastructureable_type'];
+    protected $fillable = ['name', 'ville', 'cite', 'description', 'gestionnaire_id', 'infrastructable_id', 'infrastructable_type'];
 
     public function gestionnaire(): BelongsTo
     {
@@ -24,7 +24,7 @@ class Infrastructure extends Model
         return $this->hasMany(Reservation::class);
     }
 
-    public function infrastructureable(): MorphTo
+    public function infrastructable(): MorphTo
     {
         return $this->morphTo();
     }
@@ -35,7 +35,7 @@ class Infrastructure extends Model
         parent::boot();
 
         static::deleting(function ($infrastructure) {
-            $infrastructure->infrastructureable()->delete();
+            $infrastructure->infrastructable()->delete();
         });
     }
 

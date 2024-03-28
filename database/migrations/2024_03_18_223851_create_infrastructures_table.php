@@ -19,7 +19,7 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->foreignId('gestionnaire_id')->nullable()->constrained()->onDelete('set null')->onUpdate('cascade');
             //onDeleteCascade?
-            $table->morphs('infrastructureable');
+            $table->morphs('infrastructable');
             
 
             $table->timestamps();

@@ -13,7 +13,7 @@ class Stadium extends Model
 
     public function infrastructure()
     {
-        return $this->morphOne(Infrastructure::class, 'infrastructureable')->withDefault();
+        return $this->morphOne(Infrastructure::class, 'infrastructable')->withDefault();
     }
 
     protected static function boot()
