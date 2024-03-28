@@ -20,8 +20,11 @@ Route::get('/', function () {
 
 Route::get("/reservations", function()
 {
-    return view('home');
+    return view('home')->with('title','Mes Reservations');
 })->name('reservations');
+
+
+
 
 Route::get('/dashboard', function () {
     return view('dashboard');
