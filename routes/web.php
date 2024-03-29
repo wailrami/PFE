@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\GestionnaireController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -18,10 +19,15 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::resource("admin/gestionnaires", GestionnaireController::class)->middleware('auth','verified')
+->name('index','admin.gestionnaires');
+
+
 Route::get("/reservations", function()
 {
     return view('home')->with('title','Mes Reservations');
 })->name('reservations');
+
 
 
 

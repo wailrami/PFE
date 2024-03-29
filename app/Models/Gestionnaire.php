@@ -11,6 +11,7 @@ class Gestionnaire extends Model
 {
     use HasFactory;
 
+    protected $fillable = ['user_id'];
 
     /* public function user()
     {

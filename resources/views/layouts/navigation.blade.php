@@ -16,6 +16,23 @@
                         {{ __('Dashboard') }}
                     </x-nav-link>
                 </div>
+                @if (auth()->user()->isAdmin())
+                    <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                        <x-nav-link :href="route('admin.gestionnaires')" :active="request()->routeIs('admin.gestionnaires')">
+                            {{ __('Listes des Gestionnaires') }}
+                        </x-nav-link>
+                    </div>
+                    <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                        <x-nav-link :href="route('gestionnaires.create')" :active="request()->routeIs('gestionnaires.create')">
+                            {{ __('Ajouter un Gestionnaire') }}
+                        </x-nav-link>
+                    </div>
+                    <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                        <x-nav-link :href="route('gestionnaires.create')" :active="request()->routeIs('admin.gestionnaires.create')">
+                            {{ __('Les Demandes') }}
+                        </x-nav-link>
+                    </div>
+                @endif
             </div>
 
             <!-- Settings Dropdown -->
@@ -51,6 +68,17 @@
                     </x-slot>
                 </x-dropdown>
             </div>
+
+            <div class="flex items-center">
+                <label class="switcher relative inline-block w-12 h-6">
+                  <input id="modeToggle" type="checkbox" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer">
+                  <span class="slider absolute block w-6 h-6 rounded-full bg-gray-400 appearance-none cursor-pointer"></span>
+                  <span id="modeIcon" class="absolute block w-4 h-4 rounded-full bg-white border-2 border-gray-400 transform transition-transform duration-200 ease-in-out"></span>
+                </label>
+                <span id="modeLabel" class="ml-2">Dark Mode</span>
+              </div>
+              
+              
 
             <!-- Hamburger -->
             <div class="-me-2 flex items-center sm:hidden">
