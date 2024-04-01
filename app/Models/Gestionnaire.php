@@ -11,7 +11,7 @@ class Gestionnaire extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id'];
+    protected $fillable = ['user_id','status'];
 
     /* public function user()
     {
@@ -24,14 +24,14 @@ class Gestionnaire extends Model
     }
 
 
-    /* protected static function boot()
+    protected static function boot()
     {
         parent::boot();
 
         static::deleting(function ($gestionnaire) {
             $gestionnaire->user()->delete();
         });
-    } */
+    }
 
     public function user():BelongsTo
     {

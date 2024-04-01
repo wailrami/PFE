@@ -18,18 +18,19 @@
                 </div>
                 @if (auth()->user()->isAdmin())
                     <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                        <x-nav-link :href="route('admin.gestionnaires')" :active="request()->routeIs('admin.gestionnaires')">
-                            {{ __('Listes des Gestionnaires') }}
+                        <x-nav-link :href="route('admin.gestionnaires.index')" :active="request()->routeIs('admin.gestionnaires.index')">
+                            {{ __('List of Managers') }}
                         </x-nav-link>
                     </div>
                     <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                        <x-nav-link :href="route('gestionnaires.create')" :active="request()->routeIs('gestionnaires.create')">
-                            {{ __('Ajouter un Gestionnaire') }}
+                        <x-nav-link :href="route('admin.gestionnaires.create')" :active="request()->routeIs('admin.gestionnaires.create')">
+                            {{ __('Add a Manager') }}
                         </x-nav-link>
                     </div>
                     <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                        <x-nav-link :href="route('gestionnaires.create')" :active="request()->routeIs('admin.gestionnaires.create')">
-                            {{ __('Les Demandes') }}
+                        <x-nav-link :href="route('admin.gestionnaires.requests')" 
+                        :active="request()->routeIs('admin.gestionnaires.requests')">
+                            {{ __('Requests') }}
                         </x-nav-link>
                     </div>
                 @endif
@@ -69,6 +70,7 @@
                 </x-dropdown>
             </div>
 
+            <!-- Dark Mode -->
             <div class="flex items-center">
                 <label class="switcher relative inline-block w-12 h-6">
                   <input id="modeToggle" type="checkbox" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer">
@@ -98,6 +100,18 @@
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
+            @if (auth()->user()->isAdmin())
+                <x-responsive-nav-link :href="route('admin.gestionnaires.index')" :active="request()->routeIs('admin.gestionnaires.index')">
+                    {{ __('List of Managers') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('admin.gestionnaires.create')" :active="request()->routeIs('admin.gestionnaires.create')">
+                    {{ __('Add a Manager') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('admin.gestionnaires.requests')" :active="request()->routeIs('admin.gestionnaires.requests')">
+                    {{ __('Requests') }}
+                </x-responsive-nav-link>
+                
+            @endif
         </div>
 
         <!-- Responsive Settings Options -->

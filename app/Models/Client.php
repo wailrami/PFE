@@ -24,13 +24,13 @@ class Client extends Model
         return $this->hasMany(Reservation::class);
     }
 
-    /* protected static function boot()
+    protected static function boot()
     {
         parent::boot();
 
         static::deleting(function ($client) {
             $client->user()->delete();
         });
-    } */
+    }
 
 }

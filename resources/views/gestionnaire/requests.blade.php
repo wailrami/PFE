@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('List of Managers') }}
+            {{ __('Requests') }}
         </h2>
     </x-slot>
 
@@ -28,14 +28,19 @@
                                     <td class="border px-4 py-2">{{ $gestionnaire->user->email }}</td>
                                     <td class="border px-4 py-2">{{ $gestionnaire->user->tel }}</td>
                                     <td class="border px-4 py-2 text-center">
-                                        {{-- <a href="{{ route('admin.gestionnaires.show', $gestionnaire->id) }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Voir</a> --}}
-                                        <a href="{{ route('admin.gestionnaires.edit', $gestionnaire->id) }}" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Modifier</a>
-                                        <form action="{{ route('admin.gestionnaires.destroy', $gestionnaire) }}" method="POST" class="inline">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Supprimer</button>
-                                        </form>
-                                    </td>
+                                        
+                                            <form action="{{ route('admin.gestionnaires.accept', ['id'=>$gestionnaire->id]) }}" method="POST" class="inline-block">
+                                                @csrf
+                                                <button type="submit" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Accept</button>
+                                            </form>
+                                        
+                                        
+                                            <form action="{{ route('admin.gestionnaires.reject', ['id'=>$gestionnaire->id]) }}" method="POST" class="inline-block">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Reject</button>
+                                            </form>
+                                        </td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -43,5 +48,7 @@
                 </div>
             </div>
         </div>
+
+    </div>
 
 </x-app-layout>

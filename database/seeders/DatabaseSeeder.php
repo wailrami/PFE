@@ -12,16 +12,40 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+
+        $user = \App\Models\User::factory()->create([
+            'nom' => 'admin',
+            'prenom' => 'admin',
+            'email' => 'rami242003@gmail.com',
+            'password' => bcrypt('admin'),
+            'role' => 'admin',
+            'tel' => '0561556617',    
+        ]);
+
         
 
-        for ($i = 0; $i < 10; $i++) {
+        for ($i = 0; $i < 5; $i++) {
             $user = \App\Models\User::factory()->create([
                 'password' => bcrypt('12345678'),
-                'role' => 'client',
                 'tel' => '0666666666',
+                'role' => 'gestionnaire',
+                
             ]);
             \App\Models\Gestionnaire::create([
                 'user_id' => $user->id,
+                'status' => 'pending',
+            ]);
+        }
+        for ($i = 0; $i < 5; $i++) {
+            $user = \App\Models\User::factory()->create([
+                'password' => bcrypt('12345678'),
+                'tel' => '0666666666',
+                'role' => 'gestionnaire',
+                
+            ]);
+            \App\Models\Gestionnaire::create([
+                'user_id' => $user->id,
+                'status' => 'accepted',
             ]);
         }
     }

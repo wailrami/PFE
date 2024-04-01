@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('gestionnaires', function (Blueprint $table) {
             $table->id();
+            $table->enum('status', ['pending', 'accepted', 'rejected'])->default('pending');
             $table->foreignId('user_id')->constrained()->onDelete('cascade')->onUpdate('cascade');
             $table->timestamps();
         });

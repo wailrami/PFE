@@ -18,7 +18,7 @@ class GestionnaireController extends Controller
         if (auth()->user()->role !== 'admin') {
             return redirect()->route('dashboard');
         }
-        $gestionnaires = Gestionnaire::all();
+        $gestionnaires = Gestionnaire::where('status', 'accepted')->get();
         return view('gestionnaire.index')->with('gestionnaires', $gestionnaires);
     }
 
@@ -92,5 +92,30 @@ class GestionnaireController extends Controller
         //
         $gestionnaire->delete();
         return redirect()->route('admin.gestionnaires');
+    }
+
+    public function requests()
+    {
+        if (auth()->user()->role !== 'admin') {
+            return redirect()->route('dashboard');
+        }
+        $gestionnaires = Gestionnaire::where('status', 'pending')->get();
+        return view('gestionnaire.requests')->with('gestionnaires', $gestionnaires);
+    }
+
+    public function accept($id)
+    {
+        $gestionnaire = Gestionnaire::find($id);
+        $gestionnaire->status = 'accepted';
+        $gestionnaire->save();
+        return redirect()->route('admin.gestionnaires.requests');
+    }
+
+    public function reject($id)
+    {
+        $gestionnaire = Gestionnaire::find($id);
+        $gestionnaire->status = 'rejected';
+        $gestionnaire->save();
+        return redirect()->route('admin.gestionnaires.requests');
     }
 }
