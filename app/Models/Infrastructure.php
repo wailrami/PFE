@@ -12,7 +12,7 @@ class Infrastructure extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'ville', 'cite', 'description', 'gestionnaire_id', 'infrastructable_id', 'infrastructable_type'];
+    protected $fillable = ['name', 'ville', 'cite', 'description','main_image', 'main_image_mime' , 'gestionnaire_id', 'infrastructable_id', 'infrastructable_type'];
 
     public function gestionnaire(): BelongsTo
     {
@@ -39,6 +39,28 @@ class Infrastructure extends Model
         });
     }
 
-    
+    public function images(): HasMany
+    {
+        return $this->hasMany(Image::class);
+    }
+
+    //get All Stadiums 
+    public static function getAllStadiums()
+    {
+        return Infrastructure::where('infrastructable_type', 'stadium')->get();
+    }
+
+    //get All Pools
+    public static function getAllPools()
+    {
+        return Infrastructure::where('infrastructable_type', 'pool')->get();
+    }
+
+    //get All Halls
+    public static function getAllHalls()
+    {
+        return Infrastructure::where('infrastructable_type', 'hall')->get();
+    }
+
 
 }

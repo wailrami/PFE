@@ -6,17 +6,20 @@
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
                     <a href="{{ route('dashboard') }}">
-                        <x-application-logo class="block h-9 w-auto fill-current text-gray-800 dark:text-gray-200" />
+                        <x-app-logo class="block h-16 w-auto fill-current text-gray-800 dark:text-gray-200" />
                     </a>
                 </div>
+                
 
                 <!-- Navigation Links -->
-                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                        {{ __('Dashboard') }}
-                    </x-nav-link>
-                </div>
+                
                 @if (auth()->user()->isAdmin())
+
+                    <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                        <x-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.dashboard')">
+                            {{ __('Home') }}
+                        </x-nav-link>
+                    </div>
                     <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                         <x-nav-link :href="route('admin.gestionnaires.index')" :active="request()->routeIs('admin.gestionnaires.index')">
                             {{ __('List of Managers') }}
@@ -30,11 +33,55 @@
                     <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                         <x-nav-link :href="route('admin.gestionnaires.requests')" 
                         :active="request()->routeIs('admin.gestionnaires.requests')">
-                            {{ __('Requests') }}
+                            {{ __('Manager Requests') }}
+                        </x-nav-link>
+                    </div>
+                @else
+                @if (auth()->user()->isGestionnaire())
+                    <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                        <x-nav-link :href="route('gestionnaire.dashboard')" :active="request()->routeIs('gestionnaire.dashboard')">
+                            {{ __('Home') }}
+                        </x-nav-link>
+                    </div>
+                    <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                        <x-nav-link :href="route('gestionnaire.infrastructure.index')" :active="request()->routeIs('gestionnaire.infrastructure.index')">
+                            {{ __('My Infrastructures') }}
+                        </x-nav-link>
+                    </div>
+                    <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                        <x-nav-link :href="route('gestionnaire.infrastructure.create')" :active="request()->routeIs('gestionnaire.infrastructure.create')">
+                            {{ __('Add an infrastructure') }}
+                        </x-nav-link>
+                    </div>
+
+                    <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                        <x-nav-link :href="route('gestionnaire.reservations.requests')" :active="request()->routeIs('gestionnaire.reservations.requests')">
+                            {{ __('Reservation Requests') }}
+                        </x-nav-link>
+                    </div>    
+                @else
+                @if (auth()->user()->isClient())
+                    <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                        <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
+                            {{ __('Dashboard') }}
+                        </x-nav-link>
+                    </div>
+                    <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                        <x-nav-link :href="route('infrastructure.index')" :active="request()->routeIs('infrastructure.index')">
+                            {{ __('List of Infrastructures') }}
+                        </x-nav-link>
+                    </div>
+                    <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                        <x-nav-link :href="route('reservations.index')" :active="request()->routeIs('reservations.index')">
+                            {{ __('My Reservations') }}
                         </x-nav-link>
                     </div>
                 @endif
+                @endif
+                @endif
             </div>
+
+            
 
             <!-- Settings Dropdown -->
             <div class="hidden sm:flex sm:items-center sm:ms-6">
@@ -68,17 +115,66 @@
                         </form>
                     </x-slot>
                 </x-dropdown>
+                <!-- Dark Mode -->
+                <div class="flex items-center">
+                    {{-- <label class="switcher relative inline-block w-12 h-6">
+                    <input id="modeToggle" type="checkbox" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer">
+                    <span class="slider absolute block w-6 h-6 rounded-full bg-gray-400 appearance-none cursor-pointer"></span>
+                    <span id="modeIcon" class="absolute block w-4 h-4 rounded-full bg-white border-2 border-gray-400 transform transition-transform duration-200 ease-in-out"></span>
+                    </label>
+                    <span id="modeLabel" class="ml-2">Dark Mode</span> --}}
+                    
+                    {{-- <label for="modeToggle"
+                    class="relative h-8 w-14 cursor-pointer rounded-full bg-gray-300 transition [-webkit-tap-highlight-color:_transparent] has-[:checked]:bg-green-500"
+                    >
+                        <input type="checkbox" id="modeToggle" class="peer sr-only" />
+                        
+                        <span
+                        class="absolute inset-y-0 start-0 m-1 size-6 rounded-full bg-white transition-all peer-checked:start-6"
+                        ></span>
+                    </label>     --}}
+                    <div class="dark-mode-switch">
+                        <input type="checkbox" id="dark-mode-toggle" class="hidden">
+                        <label for="dark-mode-toggle" class="toggle-label"></label>
+                    </div>
+                    <style>
+                        .toggle-label {
+                        cursor: pointer;
+                        width: 3rem;
+                        height: 1.5rem;
+                        background-color: #ddd;
+                        display: block;
+                        border-radius: 1.5rem;
+                        position: relative;
+                        }
+                    
+                        .toggle-label::after {
+                        content: '';
+                        position: absolute;
+                        width: 1rem;
+                        height: 1rem;
+                        border-radius: 50%;
+                        background-color: #fff;
+                        top: 0.25rem;
+                        left: 0.25rem;
+                        transition: transform 0.3s ease-in-out;
+                        box-shadow: 0 0 0.125rem rgba(0, 0, 0, 0.3);
+                        }
+                    
+                        #dark-mode-toggle:checked + .toggle-label {
+                        background-color: #333;
+                        }
+                    
+                        #dark-mode-toggle:checked + .toggle-label::after {
+                        transform: translateX(1.5rem);
+                        }
+                    </style>
+                                                        
+                </div>
+                
             </div>
 
-            <!-- Dark Mode -->
-            <div class="flex items-center">
-                <label class="switcher relative inline-block w-12 h-6">
-                  <input id="modeToggle" type="checkbox" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer">
-                  <span class="slider absolute block w-6 h-6 rounded-full bg-gray-400 appearance-none cursor-pointer"></span>
-                  <span id="modeIcon" class="absolute block w-4 h-4 rounded-full bg-white border-2 border-gray-400 transform transition-transform duration-200 ease-in-out"></span>
-                </label>
-                <span id="modeLabel" class="ml-2">Dark Mode</span>
-              </div>
+            
               
               
 
@@ -110,7 +206,29 @@
                 <x-responsive-nav-link :href="route('admin.gestionnaires.requests')" :active="request()->routeIs('admin.gestionnaires.requests')">
                     {{ __('Requests') }}
                 </x-responsive-nav-link>
+            @else
+            @if (auth()->user()->isGestionnaire())
+                <x-responsive-nav-link :href="route('gestionnaire.dashboard')" :active="request()->routeIs('gestionnaire.dashboard')">
+                    {{ __('Home') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('gestionnaire.infrastructure.index')" :active="request()->routeIs('gestionnaire.infrastructure.index')">
+                    {{ __('Mes Infrastructures') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('gestionnaire.infrastructure.create')" :active="request()->routeIs('gestionnaire.infrastructure.create')">
+                    {{ __('Ajouter une infrastructure') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('gestionnaire.reservations.requests')" :active="request()->routeIs('gestionnaire.reservations.requests')">
+                    {{ __('Requests') }}
+                </x-responsive-nav-link>
                 
+            @else
+            @if (auth()->user()->isClient())
+                <x-responsive-nav-link :href="route('infrastructure.index')" :active="request()->routeIs('infrastructure.index')">
+                    {{ __('List of Infrastructures') }}
+                </x-responsive-nav-link>
+
+            @endif
+            @endif
             @endif
         </div>
 

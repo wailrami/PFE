@@ -20,11 +20,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
         Relation::MorphMap([
-            'pools' => 'App\Models\Pool',
-            'halls' => 'App\Models\Hall',
-            'stadiums' => 'App\Models\Stadium',
+            'Pool' => 'App\Models\Pool',
+            'Hall' => 'App\Models\Hall',
+            'Stadium' => 'App\Models\Stadium',
         ]);
     }
 }

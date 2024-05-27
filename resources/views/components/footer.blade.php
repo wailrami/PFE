@@ -1,5 +1,9 @@
-<div class="bg-gray-800 p-15 text-gray-400 text-center" >
-    <!-- People find pleasure in different ways. I find it in keeping my mind clear. - Marcus Aurelius -->
-    &copy; Copyright {{ date('Y') }}
-    All Rights Reserved
-</div>
+<footer class="bg-slate-300 dark:bg-gray-800 dark:text-white text-black py-8"> 
+    <div class="container mx-auto flex justify-between items-center px-6">
+        <p>&copy; 2024 Crino Sport Reservations</p>
+        <div class="space-x-4">
+            <a href="#" class="hover:text-cyan-500 transition-colors duration-300">About</a>
+            <a href="{{route('contact')}}" class="hover:text-cyan-500 transition-colors duration-300">Contact</a> 
+        </div> 
+    </div> 
+</footer>

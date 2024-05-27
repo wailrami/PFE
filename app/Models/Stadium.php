@@ -9,6 +9,8 @@ class Stadium extends Model
 {
     use HasFactory;
 
+    protected $table = 'stadiums';
+    public $timestamps = false;
     protected $fillable = ['stadium_type'];
 
     public function infrastructure()
@@ -25,6 +27,12 @@ class Stadium extends Model
         });
     }
 
-    
+    public static function getAllInfrastructureStadiums()
+    {
+        return Stadium::join('infrastructures', 'infrastructures.infrastructable_id', '=', 'stadiums.id')
+            ->where('infrastructures.infrastructable_type', 'stadium')
+            ->select('stadiums.*')
+            ->get();
+    }
 
 }

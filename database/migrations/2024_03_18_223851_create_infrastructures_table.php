@@ -17,8 +17,9 @@ return new class extends Migration
             $table->string('ville');
             $table->string('cite');
             $table->text('description')->nullable();
+            $table->string('main_image')->nullable();
+            $table->string('main_image_mime')->nullable();
             $table->foreignId('gestionnaire_id')->nullable()->constrained()->onDelete('set null')->onUpdate('cascade');
-            //onDeleteCascade?
             $table->morphs('infrastructable');
             
 

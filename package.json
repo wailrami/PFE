@@ -16,6 +16,8 @@
         "vite": "^5.0.0"
     },
     "dependencies": {
-        "bootstrap": "^5.3.3"
+        "bootstrap": "^5.3.3",
+        "dropzone": "^6.0.0-beta.2",
+        "fullcalendar": "^6.1.11"
     }
 }

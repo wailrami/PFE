@@ -2,10 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\ResultMail;
 use App\Models\Gestionnaire;
 use App\Models\User;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rules\Password;
 
 class GestionnaireController extends Controller
 {
@@ -15,9 +21,6 @@ class GestionnaireController extends Controller
     public function index()
     {
         //
-        if (auth()->user()->role !== 'admin') {
-            return redirect()->route('dashboard');
-        }
         $gestionnaires = Gestionnaire::where('status', 'accepted')->get();
         return view('gestionnaire.index')->with('gestionnaires', $gestionnaires);
     }
@@ -54,6 +57,11 @@ class GestionnaireController extends Controller
         Gestionnaire::create([
             'user_id' => $user->id,
         ]);
+
+        event(new Registered($user));
+
+        Auth::login($user);
+        
         return redirect()->route('admin.gestionnaires');
     }
 
@@ -81,7 +89,7 @@ class GestionnaireController extends Controller
     {
         //
         $gestionnaire->user->update($request->all());
-        return redirect()->route('admin.gestionnaires');
+        return redirect()->route('admin.gestionnaires.index');
     }
 
     /**
@@ -91,14 +99,11 @@ class GestionnaireController extends Controller
     {
         //
         $gestionnaire->delete();
-        return redirect()->route('admin.gestionnaires');
+        return redirect()->route('admin.gestionnaires.index');
     }
 
     public function requests()
     {
-        if (auth()->user()->role !== 'admin') {
-            return redirect()->route('dashboard');
-        }
         $gestionnaires = Gestionnaire::where('status', 'pending')->get();
         return view('gestionnaire.requests')->with('gestionnaires', $gestionnaires);
     }
@@ -108,6 +113,7 @@ class GestionnaireController extends Controller
         $gestionnaire = Gestionnaire::find($id);
         $gestionnaire->status = 'accepted';
         $gestionnaire->save();
+        Mail::to($gestionnaire->user->email)->send(new ResultMail($gestionnaire));
         return redirect()->route('admin.gestionnaires.requests');
     }
 
@@ -116,6 +122,70 @@ class GestionnaireController extends Controller
         $gestionnaire = Gestionnaire::find($id);
         $gestionnaire->status = 'rejected';
         $gestionnaire->save();
+        Mail::to($gestionnaire->user->email)->send(new ResultMail($gestionnaire));
         return redirect()->route('admin.gestionnaires.requests');
+    }
+
+    public function requestRegister()
+    {
+        return view('gestionnaire.register');
+    }
+
+    public function storeRequest(Request $request)
+    {
+        $request->validate([
+            'nom' => ['required', 'string', 'max:255'],
+            'prenom' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+            'tel' =>['required','string','min:10','max:10'],
+        ],[
+            'tel.min' => 'The phone number must contain 10 digits',
+            'tel.max' => 'The phone number must contain 10 digits',
+            'tel.unique' => 'This phone number is already used',
+            'email.unique' => 'This email is already used',
+            'email.lowercase' => 'The email must be in lowercase',
+            'nom.required' => 'The last name is required',
+            'prenom.required' => 'The first name is required',
+            'email.required' => 'The email is required',
+            'tel.required' => 'The phone number is required',
+        ]);
+        $requestData = $request->all();
+
+        $user = new User();
+        $user->nom = $requestData['nom'];
+        $user->prenom = $requestData['prenom'];
+        $user->email = $requestData['email'];
+        
+        $user->role = 'gestionnaire';
+        $user->tel = $requestData['tel'];
+        $user->email_verified_at = now();
+        $user->remember_token = Str::random(10);
+        $user->password = bcrypt(Str::random(8));
+        $user->created_at = now();
+        $user->updated_at = now();
+        $user->save();
+        Gestionnaire::create([
+            'user_id' => $user->id,
+            'status' => 'pending',
+        ]);
+        return redirect()->route('root');//better return to the same page
+    }
+
+
+
+    public function passwordView($id)
+    {
+        return view('gestionnaire.password', ['gestionnaire' => Gestionnaire::find($id)]);
+    }
+
+    public function setPassword(Request $request ,$id)
+    {
+        $request->validate([
+            'password' => ['required', 'string', 'min:8', 'confirmed',Password::defaults()],
+        ]);
+        $gestionnaire = Gestionnaire::find($id);
+        $gestionnaire->user->password = Hash::make($request->password);
+        $gestionnaire->user->save();
+        return redirect()->route('login');
     }
 }

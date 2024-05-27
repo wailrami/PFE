@@ -10,6 +10,7 @@ class Pool extends Model
     use HasFactory;
 
     protected $fillable = ['pool_type'];
+    public $timestamps = false;
 
     public function infrastructure()
     {
@@ -26,5 +27,12 @@ class Pool extends Model
     }
 
     
+    public static function getAllInfrastructurePools()
+    {
+        return Pool::join('infrastructures', 'infrastructures.infrastructable_id', '=', 'pools.id')
+            ->where('infrastructures.infrastructable_type', 'pool')
+            ->select('pools.*')
+            ->get();
+    }
 
 }

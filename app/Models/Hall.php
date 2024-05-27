@@ -10,6 +10,7 @@ class Hall extends Model
     use HasFactory;
 
     protected $fillable = ['hall_type'];
+    public $timestamps = false;
 
     public function infrastructure()
     {
@@ -23,6 +24,15 @@ class Hall extends Model
         static::deleting(function ($hall) {
             $hall->infrastructure()->delete();
         });
+    }
+
+
+    public static function getAllInfrastructureHalls()
+    {
+        return Hall::join('infrastructures', 'infrastructures.infrastructable_id', '=', 'halls.id')
+            ->where('infrastructures.infrastructable_type', 'hall')
+            ->select('halls.*')
+            ->get();
     }
 
     

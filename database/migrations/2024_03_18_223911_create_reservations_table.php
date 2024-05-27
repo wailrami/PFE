@@ -14,7 +14,8 @@ return new class extends Migration
         Schema::create('reservations', function (Blueprint $table) {
             $table->id();
             $table->date('res_date');
-            $table->time('res_heure');
+            $table->time('start_time');
+            $table->time('end_time');
 
             $table->enum('etat',['accepte','refuse','enattente']);
 

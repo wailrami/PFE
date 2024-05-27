@@ -22,7 +22,19 @@ class DatabaseSeeder extends Seeder
             'tel' => '0561556617',    
         ]);
 
-        
+        $user = \App\Models\User::factory()->create([
+            'nom' => 'gestionnaire',
+            'prenom' => 'gestionnaire',
+            'email' => 'ramidz242003@gmail.com',
+            'password' => bcrypt('12345678'),
+            'tel' => '0666666666',
+            'role' => 'gestionnaire',
+            
+        ]);
+        \App\Models\Gestionnaire::create([
+            'user_id' => $user->id,
+            'status' => 'accepted',
+        ]);
 
         for ($i = 0; $i < 5; $i++) {
             $user = \App\Models\User::factory()->create([
