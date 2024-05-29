@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -24,8 +25,6 @@ class User extends Authenticatable
         'prenom',
         'email',
         'tel',
-        /* 'userable_id',
-        'userable_type', */
         'role',
         'password',
     ];
@@ -97,6 +96,12 @@ class User extends Authenticatable
     public function gestionnaire():HasOne
     {
         return $this->hasOne(Gestionnaire::class);
+    }
+
+    //Notification Relationship
+    public function notifications():HasMany
+    {
+        return $this->hasMany(Notification::class);
     }
 
 }

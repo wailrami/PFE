@@ -63,7 +63,7 @@
                                         <div class="text-sm text-gray-900 dark:text-gray-100">{{ $reservation->end_time }}</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <span class="px-2 inline-flex text-sm leading-5 font-semibold rounded-full bg-{{ $reservation->etat == 'enattente' ? 'yellow' : ($reservation->etat == 'accepte' ? 'green' : 'red') }}-100 text-{{ $reservation->etat == 'enattente' ? 'yellow' : ($reservation->etat == 'accepte' ? 'green' : 'red') }}-800">
+                                        <span class="px-2 inline-flex text-sm leading-5 font-semibold rounded-full {{ $reservation->etat == 'enattente' ? 'bg-orange-500' : ($reservation->etat == 'accepte' ? 'bg-green-600' : 'bg-red-600') }} text-white">
                                             {{ $reservation->etat == 'enattente' ? 'Pending' : ($reservation->etat == 'accepte' ? 'Accepted' : 'Rejected') }}
                                         </span>
                                     </td>

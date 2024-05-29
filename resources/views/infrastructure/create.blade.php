@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('Ajouter un Infrastructure') }}
+            {{ __('Add an Infrastructure') }}
         </h2>
     </x-slot>
     
@@ -16,7 +16,7 @@
                             <div >
 
                                 <div>
-                                    <label for="name" class="block text-xl font-medium text-gray-700 dark:text-gray-200">Nom</label>
+                                    <label for="name" class="block text-xl font-medium text-gray-700 dark:text-gray-200">Name</label>
                                     <input type="text" name="name" id="name" autocomplete="given-name" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:bg-gray-700 dark:text-gray-200">
                                 </div>
                                 
@@ -47,16 +47,16 @@
                                         {{-- <x-radio-image name="pool_type" id="pool_type" value="private" image="images/private_pool.jfif" alt="private" text="Private" /> --}}
 
 
-                                        {{-- <label for="pool_type" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Pool Type</label> --}}
-                                        {{-- <input type="radio" name="pool_type" id="pool_type" value="olympic" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:bg-gray-700 dark:text-gray-200"> --}}
-                                        {{-- Olympic <img src="{{ asset('images/olympic.jpg') }}" alt="olympic" class="w-20 h-20"> --}}
-                                        {{-- </input> --}}
-                                        {{-- <input type="radio" name="pool_type" id="pool_type" value="semi_olympic" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:bg-gray-700 dark:text-gray-200"> --}}
-                                        {{-- Semi-Olympic <img src="{{ asset('images/public.jpg') }}" alt="public" class="w-20 h-20"> --}}
-                                        {{-- </input> --}}
-                                        {{-- <input type="radio" name="pool_type" id="pool_type" value="private" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:bg-gray-700 dark:text-gray-200"> --}}
-                                            {{-- Private<img src="{{ asset('images/private.jpg') }}" alt="private" class="w-20 h-20"> --}}
-                                        {{-- </input> --}}
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-200">Pool Type</label><br>
+                                        <input type="radio" name="pool_type" id="pool_type" value="olympic" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block shadow-sm sm:text-sm border-gray-300 rounded-md dark:bg-gray-700 dark:text-gray-200">
+                                        Olympic
+                                        </input>
+                                        <input type="radio" name="pool_type" id="pool_type" value="semi_olympic" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block  shadow-sm sm:text-sm border-gray-300 rounded-md dark:bg-gray-700 dark:text-gray-200">
+                                        Semi-Olympic 
+                                        </input>
+                                        <input type="radio" name="pool_type" id="pool_type" value="private" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block  shadow-sm sm:text-sm border-gray-300 rounded-md dark:bg-gray-700 dark:text-gray-200">
+                                            Private
+                                        </input>
                                     </div>
                                     <div id="type_stadium" class="grid grid-cols-1 gap-6 sm:grid-cols-2 transition ease-linear duration-1000">
                                         <x-radio-image name="stadium_type" id="eleven" value="Eleven a side" image="images/eleven-a-side_stadium.jfif" alt="Eleven-a-Side" text="Eleven-a-Side"/>
@@ -133,7 +133,7 @@
                         @endif
                         <div class="mt-6">
                             <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:bg-indigo-400 dark:hover:bg-indigo-500 dark:text-gray-900">
-                                Ajouter
+                                Add
                             </button>
                         </div>
                     </form>

@@ -55,20 +55,20 @@
                                         <div class="text-sm text-gray-900 dark:text-gray-100">{{ $reservation->end_time }}</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-{{ $reservation->etat == 'enattente' ? 'yellow' : ($reservation->etat == 'accepte' ? 'green' : 'red') }}-100 text-{{ $reservation->etat == 'enattente' ? 'yellow' : ($reservation->etat == 'accepte' ? 'green' : 'red') }}-800">
-                                            {{ $reservation->etat }}
-                                        </span>
+                                        <div class="text-sm text-gray-900 dark:text-gray-100">
+                                            {{ $reservation->infrastructure->name }}
+                                        </div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                         {{-- <a href="{{ route('reservation.show', $reservation->id) }}" class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-600">View</a> --}}
                                         @if ($reservation->etat == 'enattente')
                                             <form action="{{ route('gestionnaire.reservations.accept', $reservation->id) }}" method="POST" class="inline">
                                                 @csrf
-                                                <button type="submit" class="text-green-600 hover:text-green-900 dark:text-green-400 dark:hover:text-green-600">Approve</button>
+                                                <button type="submit" class="bg-green-500 mx-1 hover:bg-green-700 text-white px-2 inline-flex text-sm leading-5 font-semibold rounded-full">Approve</button>
                                             </form>
                                             <form action="{{ route('gestionnaire.reservations.reject', $reservation->id) }}" method="POST" class="inline">
                                                 @csrf
-                                                <button type="submit" class="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-600">Reject</button>
+                                                <button type="submit" class="bg-red-500 mx-1 hover:bg-red-700 text-white px-2 inline-flex text-sm leading-5 font-semibold rounded-full">Reject</button>
                                             </form>
                                         @endif
                                     </td>

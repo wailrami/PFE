@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Hall;
 use App\Models\Infrastructure;
+use App\Models\Notification;
 use App\Models\Pool;
 use App\Models\Reservation;
 use App\Models\Stadium;
@@ -20,7 +21,7 @@ class ReservationController extends Controller
     public function index()
     {
         //
-        $reservations = Reservation::where('client_id', Auth::user()->client->id)->get();
+        $reservations = Reservation::where('client_id', Auth::user()->client->id)->orderBy('etat', 'asc')->get();
         
         return view('reservation.my_reservations', compact('reservations'));
     }
@@ -97,6 +98,14 @@ class ReservationController extends Controller
         $reservation->etat = 'enattente';
         $reservation->save();
 
+        //Notification informing the manager of the reservation request specifying the infrastructure
+        $notification = new Notification();
+        $notification->title = 'New Reservation Request';
+        $notification->content = 'A new reservation request has been made for '.$reservation->infrastructure->name.' on '.$reservation->res_date.'.';
+        $notification->type = 'reservation';
+        $notification->user_id = Infrastructure::find($reservation->infrastructure_id)->gestionnaire->user->id;
+        $notification->save();
+
         return redirect()->back()
         ->with('success', 'Reservation request sent successfully. Please wait for the confirmation from the Manager. ');
     }
@@ -157,8 +166,15 @@ class ReservationController extends Controller
     {
         //
         $reservation->delete();
+        //Notification for the manager with specifying which reservation has been cancelled
+        $notification = new Notification();
+        $notification->title = 'Reservation Cancelled';
+        $notification->content = 'The reservation for '.$reservation->infrastructure->name.' on '.$reservation->res_date.' has been cancelled.';
+        $notification->type = 'reservation';
+        $notification->user_id = $reservation->infrastructure->gestionnaire->user->id;
+        $notification->save();
         return redirect()->back()
-        ->with('success', 'Reservation annulée avec succès!');
+        ->with('success', 'Reservation cancelled seccessfully!');
     }
 
     public function requests()
@@ -172,8 +188,15 @@ class ReservationController extends Controller
         $reservation = Reservation::find($id);
         $reservation->etat = 'accepte';
         $reservation->save();
+        //Notification
+        $notification = new Notification();
+        $notification->title = 'Reservation Accepted';
+        $notification->content = 'Your reservation has been accepted. You can now view it in your reservations list.';
+        $notification->type = 'reservation';
+        $notification->user_id = $reservation->client->user->id;
+        $notification->save();
         return redirect()->route('gestionnaire.reservations.requests')
-        ->with('success', 'Reservation acceptée avec succès!');
+        ->with('success', 'Reservation accepted successfully!');
     }
 
     public function reject($id)
@@ -181,7 +204,15 @@ class ReservationController extends Controller
         $reservation = Reservation::find($id);
         $reservation->etat = 'refuse';
         $reservation->save();
+        //Notification
+        $notification = new Notification();
+        $notification->title = 'Reservation Rejected';
+        $notification->content = 'Your reservation has been rejected. Please contact the manager for more information.';
+        $notification->type = 'reservation';
+        $notification->user_id = $reservation->client->user->id;
+        $notification->save();
+
         return redirect()->route('gestionnaire.reservations.requests')
-        ->with('success', 'Reservation rejetée avec succès!');
+        ->with('success', 'Reservation rejected successfully!');
     }
 }

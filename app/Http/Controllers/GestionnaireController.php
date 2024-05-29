@@ -88,7 +88,30 @@ class GestionnaireController extends Controller
     public function update(Request $request, Gestionnaire $gestionnaire)
     {
         //
-        $gestionnaire->user->update($request->all());
+        $request->validate([
+            'nom' => ['required', 'string', 'max:255'],
+            'prenom' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255'],
+            'tel' =>['required','string','min:10','max:10'],
+        ],[
+            'tel.min' => 'The phone number must contain 10 digits',
+            'tel.max' => 'The phone number must contain 10 digits',
+            'email.lowercase' => 'The email must be in lowercase',
+            'nom.required' => 'The last name is required',
+            'prenom.required' => 'The first name is required',
+            'email.required' => 'The email is required',
+            'tel.required' => 'The phone number is required',
+        ]);
+
+
+        $requestData = $request->all();
+
+        $gestionnaire->user->nom = $requestData['nom'];
+        $gestionnaire->user->prenom = $requestData['prenom'];
+        $gestionnaire->user->email = $requestData['email'];
+        $gestionnaire->user->tel = $requestData['tel'];
+        $gestionnaire->user->save();
+
         return redirect()->route('admin.gestionnaires.index');
     }
 

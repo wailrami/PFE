@@ -13,11 +13,11 @@
                     <form action="{{ route('admin.gestionnaires.store') }}" method="POST">
                         @csrf
                         <div class="mb-4">
-                            <label for="nom" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Nom</label>
+                            <label for="nom" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Family Name</label>
                             <input type="text" name="nom" id="nom" class="form-input rounded-md text-black shadow-sm mt-1 block w-full" required>
                         </div>
                         <div class="mb-4">
-                            <label for="prenom" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Prénom</label>
+                            <label for="prenom" class="block text-sm font-medium text-gray-700 dark:text-gray-200">First Name</label>
                             <input type="text" name="prenom" id="prenom" class="form-input rounded-md text-black shadow-sm mt-1 block w-full" required>
                         </div>
                         <div class="mb-4">
@@ -25,20 +25,12 @@
                             <input type="email" name="email" id="email" class="form-input rounded-md text-black shadow-sm mt-1 block w-full" required>
                         </div>
                         <div class="mb-4">
-                            <label for="tel" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Téléphone</label>
+                            <label for="tel" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Phone Number</label>
                             <input type="tel" name="tel" id="tel" class="form-input rounded-md text-black shadow-sm mt-1 block w-full" required>
                         </div>
-                        <div class="mb-4">
-                            <label for="password" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Mot de passe</label>
-                            <input type="password" name="password" id="password" class="form-input rounded-md text-black shadow-sm mt-1 block w-full" required>
-                        </div>
-                        <div class="mb-4">
-                            <label for="password_confirmation" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Confirmer
-                                le mot de passe</label>
-                            <input type="password" name="password_confirmation" id="password_confirmation" class="form-input rounded-md text-black shadow-sm mt-1 block w-full" required>
-                        </div>
+                        
                         <button type="submit"
-                            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Ajouter</button>
+                            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Add</button>
                     </form>
                 </div>
             </div>

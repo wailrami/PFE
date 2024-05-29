@@ -209,8 +209,8 @@ class InfrastructureController extends Controller
     public function search(Request $request)
     {
         $search = $request->get('search');
-        $infarstructures = Infrastructure::where('name', 'like', '%' . $search . '%')->get();
-        return view('infrastructure.index', compact('infarstructures'));
+        $infrastructures = Infrastructure::where('name', 'like', '%' . $search . '%')->get();
+        return view('infrastructure.index', compact('infrastructures'));
     }
 
 
@@ -218,8 +218,8 @@ class InfrastructureController extends Controller
     public function filter(Request $request)
     {
         $filter = $request->get('filter');
-        $infarstructures = Infrastructure::where('type', 'like', '%' . $filter . '%')->get();
-        return view('infrastructure.index', compact('infarstructures'));
+        $infrastructures = Infrastructure::where('infrastructable_type',$filter)->get();
+        return view('infrastructure.index', compact('infrastructures'));
     }
 
 
@@ -231,6 +231,21 @@ class InfrastructureController extends Controller
         return view('infrastructure.index', compact('infarstructures'));
     }
 
+
+    //search and filter infrastructure functions for gestionnaire
+    public function searchGestionnaire(Request $request)
+    {
+        $search = $request->get('search');
+        $infrastructures = Infrastructure::where('name', 'like', '%' . $search . '%')->where('gestionnaire_id',auth()->user()->gestionnaire->id)->get();
+        return view('infrastructure.gestionnaire_index', compact('infrastructures'));
+    }
+
+    public function filterGestionnaire(Request $request)
+    {
+        $filter = $request->get('filter');
+        $infrastructures = Infrastructure::where('infrastructable_type',$filter)->where('gestionnaire_id',auth()->user()->gestionnaire->id)->get();
+        return view('infrastructure.gestionnaire_index', compact('infrastructures'));
+    }
 
 
     public function sortDesc(Request $request)

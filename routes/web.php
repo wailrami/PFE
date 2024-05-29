@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\GestionnaireController;
 use App\Http\Controllers\InfrastructureController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReservationController;
 use App\Mail\TestMail;
@@ -37,12 +38,26 @@ Route::get('/contact', function () {
     return view('contact_us');
 })->name('contact');
 
+Route::get('/about', function () {
+    return view('about');
+})->name('about');
+
+
+// Notification routes
+Route::get('/notifications', [NotificationController::class,'index'])->name('notifications')->middleware('auth','verified'); 
+Route::patch('/notifications/{id}', [NotificationController::class,'markAsRead'])->name('notifications.markAsRead')->middleware('auth','verified');
+Route::patch('/notifications', [NotificationController::class,'markAllAsRead'])->name('notifications.markAllAsRead')->middleware('auth','verified');
+Route::patch('/notifications/{id}/unread', [NotificationController::class,'markAsUnread'])->name('notifications.markAsUnread')->middleware('auth','verified');
+Route::delete('/notifications/{id}', [NotificationController::class,'destroy'])->name('notifications.destroy')->middleware('auth','verified');
+
+
+
 
 //----------------- Routes for the Admin Panel -------------------
 
-Route::get('/admin', function () {
-    return view('dashboard');//Temporary
-})->middleware(['auth', 'verified','admin'])->name('admin.dashboard');
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['admin','auth', 'verified'])->name('dashboard');
 
 
 Route::prefix('admin/gestionnaires')->middleware('admin','auth','verified')->group(function () {
@@ -59,20 +74,26 @@ Route::resource("admin/gestionnaires", GestionnaireController::class)->middlewar
 
 //------------------- Routes for the Gestionnaire Panel -------------------
 
-Route::get('/gestionnaire', function () {
-    return view('dashboard');//Temporary
-})->middleware(['gestionnaire','auth', 'verified'])->name('gestionnaire.dashboard');
+// Route::get('/gestionnaire', function () {
+//     return view('dashboard');//Temporary
+// })->middleware(['gestionnaire','auth', 'verified'])->name('gestionnaire.dashboard');
 
 Route::prefix('gestionnaire/reservations')->middleware('gestionnaire','auth','verified')->group(function(){
     Route::get('requests', [ReservationController::class, 'requests'])->name('gestionnaire.reservations.requests');
     Route::post('requests/{id}/accept', [ReservationController::class, 'accept'])->name('gestionnaire.reservations.accept');
-    Route::delete('requests/{id}/reject', [ReservationController::class, 'reject'])->name('gestionnaire.reservations.reject');
+    Route::post('requests/{id}/reject', [ReservationController::class, 'reject'])->name('gestionnaire.reservations.reject');
 
 }); 
 
 Route::get('gestionnaire/infrastructure',[InfrastructureController::class,'gestionnaireIndex'])
     ->middleware('gestionnaire','auth','verified')
     ->name('gestionnaire.infrastructure.index');
+
+    //search and filter infrastructure routes for gestionnaire
+Route::get('/gestionnaire/infrastructure/search', [InfrastructureController::class, 'searchGestionnaire'])->middleware(['gestionnaire','auth', 'verified'])
+->name('gestionnaire.infrastructure.search');
+Route::get('/gestionnaire/infrastructure/filter', [InfrastructureController::class, 'filterGestionnaire'])->middleware(['gestionnaire','auth', 'verified'])
+->name('gestionnaire.infrastructure.filter');
 
 Route::resource("gestionnaire/infrastructure", InfrastructureController::class)->middleware('gestionnaire','auth','verified')
     ->except(['index'])
@@ -85,14 +106,18 @@ Route::post('/upload', [InfrastructureController::class, 'upload'])->name('uploa
 
 
 //------------------- Routes for the Client Panel -------------------
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+
 
 Route::get('/infarstructures', [InfrastructureController::class, 'index'])->middleware(['client','auth', 'verified'])
 ->name('infrastructure.index');
 Route::get('/infarstructures/{infrastructure}', [InfrastructureController::class, 'details'])->middleware(['client','auth', 'verified'])
 ->name('infrastructure.details');
+
+
+Route::get('/infrastructure/search', [InfrastructureController::class, 'search'])->middleware(['client','auth', 'verified'])
+->name('infrastructure.search');
+Route::get('/infrastructure/filter', [InfrastructureController::class, 'filter'])->middleware(['client','auth', 'verified'])
+->name('infrastructure.filter');
 
 Route::resource("reservations", ReservationController::class)->middleware('client','auth','verified')
     ->name('index','reservations.index')->name('create','reservations.create')
