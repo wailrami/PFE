@@ -31,9 +31,14 @@
                 </div>
                 {{-- show more button and mark as read button, place to the end of the container --}}
                 <div class="ml-4">
-                    <a href="{{ route('notifications', $notification) }}"
+                    <form action="{{ route('notifications.show', ['id'=>$notification->id]) }}" method="POST" class="inline">
+                        @csrf
+                            @method('PATCH')
+                            <button type="submit"
                         class="text-blue-500 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-500 mx-4">Show
-                        more</a>
+                        more
+                            </button>
+                    </form>
                     @if ($notification->is_read == false)
                         <form action="{{ route('notifications.markAsRead', $notification) }}" method="POST"
                             class="inline">

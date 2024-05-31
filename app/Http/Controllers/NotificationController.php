@@ -18,6 +18,20 @@ class NotificationController extends Controller
         return view('notifications.index', compact('notifications'));
     }
 
+    public function show($id)
+    {
+        $notification = Notification::find($id);
+        $notification->markAsRead();
+        if($notification->type == 'reservation_client')
+        {
+            return redirect()->route('reservations.index');
+        }
+        else if($notification->type == 'reservation_gestionnaire')
+        {
+            return redirect()->route('gestionnaire.reservations.requests');
+        }
+    }
+
     /**
      * Remove the specified resource from storage.
      */

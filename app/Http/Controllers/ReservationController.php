@@ -102,7 +102,7 @@ class ReservationController extends Controller
         $notification = new Notification();
         $notification->title = 'New Reservation Request';
         $notification->content = 'A new reservation request has been made for '.$reservation->infrastructure->name.' on '.$reservation->res_date.'.';
-        $notification->type = 'reservation';
+        $notification->type = 'reservation_gestionnaire';
         $notification->user_id = Infrastructure::find($reservation->infrastructure_id)->gestionnaire->user->id;
         $notification->save();
 
@@ -170,7 +170,7 @@ class ReservationController extends Controller
         $notification = new Notification();
         $notification->title = 'Reservation Cancelled';
         $notification->content = 'The reservation for '.$reservation->infrastructure->name.' on '.$reservation->res_date.' has been cancelled.';
-        $notification->type = 'reservation';
+        $notification->type = 'reservation_gestionnaire';
         $notification->user_id = $reservation->infrastructure->gestionnaire->user->id;
         $notification->save();
         return redirect()->back()
@@ -191,8 +191,9 @@ class ReservationController extends Controller
         //Notification
         $notification = new Notification();
         $notification->title = 'Reservation Accepted';
-        $notification->content = 'Your reservation has been accepted. You can now view it in your reservations list.';
-        $notification->type = 'reservation';
+        //specify the name and date
+        $notification->content = 'Your reservation for '.$reservation->infrastructure->name.' on '.$reservation->res_date.' has been accepted.';
+        $notification->type = 'reservation_client';
         $notification->user_id = $reservation->client->user->id;
         $notification->save();
         return redirect()->route('gestionnaire.reservations.requests')
@@ -207,8 +208,10 @@ class ReservationController extends Controller
         //Notification
         $notification = new Notification();
         $notification->title = 'Reservation Rejected';
-        $notification->content = 'Your reservation has been rejected. Please contact the manager for more information.';
-        $notification->type = 'reservation';
+        //specify the name and date
+        $notification->content = 'Your reservation for '.$reservation->infrastructure->name.' on '.$reservation->res_date.' has been rejected.';
+        //TODO
+        $notification->type = 'reservation_client';
         $notification->user_id = $reservation->client->user->id;
         $notification->save();
 

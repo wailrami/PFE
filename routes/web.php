@@ -49,7 +49,7 @@ Route::patch('/notifications/{id}', [NotificationController::class,'markAsRead']
 Route::patch('/notifications', [NotificationController::class,'markAllAsRead'])->name('notifications.markAllAsRead')->middleware('auth','verified');
 Route::patch('/notifications/{id}/unread', [NotificationController::class,'markAsUnread'])->name('notifications.markAsUnread')->middleware('auth','verified');
 Route::delete('/notifications/{id}', [NotificationController::class,'destroy'])->name('notifications.destroy')->middleware('auth','verified');
-
+Route::patch('/notifications/{id}/details', [NotificationController::class,'show'])->name('notifications.show')->middleware('auth','verified');
 
 
 
