@@ -12,10 +12,10 @@
     
     <div class="py-12 px-16 grid grid-cols-1 lg:grid-cols-2 gap-4">
         
-        <div class="bg-white dark:bg-slate-800 shadow-lg rounded-lg">
+        <div class="bg-white dark:bg-slate-800 w-full h-fit shadow-lg rounded-lg">
             <div class="bg-gray-200 h-1/2 dark:bg-slate-700">
                 <div class="relative h-full bg-gray-300">
-                    <img class="object-cover w-full h-full" src="{{ asset('storage/' . $infrastructure->main_image) }}" alt="{{ $infrastructure->name }}" />
+                    <img class=" w-full h-full" src="{{ asset('storage/' . $infrastructure->main_image) }}" alt="{{ $infrastructure->name }}" />
                 </div>
             </div>
             <div class="flex-wrap">
@@ -30,13 +30,13 @@
                         <p class="text-md text-gray-500 dark:text-white">Address: {{ $infrastructure->cite }}</p>
                         <p class="text-md text-gray-700 dark:text-slate-400">{{ $infrastructure->description }}</p>
                     </div>
-                    <div>
+                    <div class="mb-4">
                         <p class="text-md text-gray-500 dark:text-white">Managed by:</p>
                         <p class="text-xl font-semibold text-gray-500 dark:text-white">{{ $infrastructure->gestionnaire->user->nom.' '.$infrastructure->gestionnaire->user->prenom }}</p>
                     </div>
                 </div>
                 @if(auth()->user()->role == 'client')
-                    <div class="align-bottom">
+                    <div class="mb-4">
                         <div class="grid grid-cols-1 sm:grid-cols-2">
                             <div class="p-4">
                                 <a href="{{route('reservations.create', ['id' => $infrastructure->id])}}" class="px-4 py-2 bg-blue-500 text-white rounded-md">Reserve</a>
@@ -48,10 +48,17 @@
                     </div>
                 @else
                     @if (auth()->user()->role == 'gestionnaire')
-                        <div class="align-bottom">
-                            <div class="grid grid-cols-1 sm:grid-cols-2">
+                        <div class="mb-4">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 align-middle">
                                 <div class="p-4">
-                                    <a href="{{route('gestionnaire.infrastructure.index')}}" class="px-4 py-2 text-blue-500 rounded-md">Back</a>
+                                    <a href="{{route('gestionnaire.infrastructure.edit', $infrastructure)}}" class="px-4 py-2 bg-blue-500 text-white rounded-md">Edit</a>
+                                </div>
+                                <div class="p-4">
+                                    <form action="{{route("gestionnaire.infrastructure.destroy", $infrastructure)}}" method="post" class="inline">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="px-4 py-2 bg-red-500 text-white rounded-md">Delete</button>
+                                    </form>
                                 </div>
                             </div>
                         </div>

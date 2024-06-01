@@ -29,6 +29,25 @@ class Infrastructure extends Model
         return $this->morphTo();
     }
 
+    //get Stadium instance by id
+    public static function getStadium($id)
+    {
+        return Stadium::find($id);
+    }
+
+    //get Pool instance by id
+    public static function getPool($id)
+    {
+        return Pool::find($id);
+    }
+
+    //get Hall instance by id
+    public static function getHall($id)
+    {
+        return Hall::find($id);
+    }
+    
+
     // Add the following method to enable cascading delete
     protected static function boot()
     {

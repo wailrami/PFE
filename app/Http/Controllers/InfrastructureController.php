@@ -109,8 +109,8 @@ class InfrastructureController extends Controller
             dd($e->getMessage());
         }
         
-        return redirect()->route('gestionnaire.infrastructure.index')
-            ->with('success', 'Infrastructure created successfully.');
+        return redirect()->route('infrastructure.index')
+            ->with('success', 'The infrastructure ' . $infrastructure->name . ' has been created successfully.');
     }
 
 
@@ -186,20 +186,86 @@ class InfrastructureController extends Controller
     {
         $request->validate([
             'name' => 'required',
-            'description' => 'required',
-            'location' => 'required',
-            'type' => 'required',
-            'status' => 'required',
+            'ville' => 'required',
+            'cite' => 'required',
+            'infrastructable_type' => 'required',
+            'main_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,jfif|max:2048',
+            'images' => 'nullable|array',
+            'images.*' => 'image|mimes:jpeg,png,jpg,gif,svg,jfif|max:2048',
+        ], [
+            'main_image.image' => 'The main image must be an image',
+            'main_image.mimes' => 'The main image must be a file of type: jpeg, png, jpg, gif, svg, jfif',
+            'main_image.max' => 'The main image may not be greater than 2048 kilobytes',
+            'images.array' => 'The images must be an array',
+            'images.*.image' => 'The images must be images',
+            'images.*.mimes' => 'The images must be files of type: jpeg, png, jpg, gif, svg, jfif',
+            'images.*.max' => 'The images may not be greater than 2048 kilobytes',
+            'name.required' => 'The name is required',
+            'ville.required' => 'The city is required',
+            'cite.required' => 'The address is required',
+            //'infrastructable_type.required' => 'The type is required',
         ]);
 
-        $infrastructure->update($request->all());
+        
+        $infrastructure->name = $request->name;
+        if(isset($request->description))
+            $infrastructure->description = $request->description;
+        else
+            $infrastructure->description = null;
+        $infrastructure->ville = $request->ville;
+        $infrastructure->cite = $request->cite;
 
-        return redirect()->route('infrastructure.index')
-            ->with('success', 'Infrastructure updated successfully');
+        if ($infrastructure->infrastructable_type == 'pool') {
+            $pool = Pool::find($infrastructure->infrastructable->id);
+            $pool->pool_type = $request->pool_type;
+            $pool->save();
+            $infrastructure->infrastructable()->associate($pool);
+        } else if ($infrastructure->infrastructable_type == 'stadium') {
+            $stadium = Stadium::find($infrastructure->infrastructable->id);
+            $stadium->stadium_type = $request->stadium_type;
+            $stadium->save();
+            $infrastructure->infrastructable()->associate($stadium);
+        } else if ($infrastructure->infrastructable_type == 'hall') {
+            $hall = Hall::find($infrastructure->infrastructable->id);
+            $hall->hall_type = $request->hall_type;
+            $hall->save();
+            $infrastructure->infrastructable()->associate($hall);
+        }
+
+        if ($request->hasFile('main_image')) {
+            $imageFile = $request->file('main_image');
+            $infrastructure->main_image = $imageFile->store('images', 'public');
+            $infrastructure->main_image_mime = $imageFile->getMimeType();
+        }
+
+        if ($request->hasFile('images')){
+            foreach ($request->file('images') as $imageFile) {
+                $image = new Image();
+                $image->image = file_get_contents($imageFile->getRealPath());
+                $image->mime = $imageFile->getMimeType();
+                $image->infrastructure()->associate($infrastructure);
+                $image->save();
+            }
+        }
+
+        $infrastructure->save();
+
+        //success message specifying infrastructure name
+        return redirect()->route('gestionnaire.infrastructure.index')
+            ->with('success', 'The infrastructure ' . $infrastructure->name . ' has been updated successfully.');
     }
 
     public function destroy(Infrastructure $infrastructure)
     {
+        if($infrastructure->main_image)
+            unlink(storage_path('app/public/' . $infrastructure->main_image));
+
+        foreach ($infrastructure->images as $image) {
+            $image->delete();
+        }
+
+        //delete the instance of Stadium, Pool or Hall
+        $infrastructure->infrastructable->delete();
         $infrastructure->delete();
 
         return redirect()->route('infrastructure.index')

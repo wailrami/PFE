@@ -2,7 +2,7 @@
 
 <div class="max-w-xl min-w-32 w-72 mx-auto bg-gray-200 dark:bg-slate-700 shadow-md rounded-md overflow-hidden">
     <div class="relative h-50 bg-gray-300">
-        <img class="object-cover w-full h-full" src="{{ asset('storage/' . $infrastructure->main_image) }}" alt="Infrastructure Photo">
+        <img class="w-full h-56" src="{{ asset('storage/' . $infrastructure->main_image) }}" alt="Infrastructure Photo">
     </div>
 
     @php

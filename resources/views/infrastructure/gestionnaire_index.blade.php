@@ -5,6 +5,11 @@
         </h2>
     </x-slot>
     
+
+    {{-- success message using x-alert-message component --}}
+
+    <x-alert-message class="mb-4" :message="session('success')" />
+
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="relative bottom-4 max-w-7xl w-full sm:px-6 lg:px-8 grid grid-cols-1 sm:grid-cols-2 align-middle">
@@ -18,15 +23,25 @@
                     <a class='mx-4 transition ease-linear duration-100 hover:underline hover:text-blue-400' href="{{route('gestionnaire.infrastructure.filter',['filter'=> 'Hall'])}}">Halls</a>
                 </div>
             </div>
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900 dark:text-gray-100">
-                    <div class="grid grid-cols-1 gap-4 lg:grid-cols-3 lg:gap-8">
-                        @foreach ($infrastructures as $infrastructure)
-                            <x-infrastructure-card :infrastructure="$infrastructure" />
-                        @endforeach
+
+            {{-- if there is no infrastructure --}}
+            @if ($infrastructures->isEmpty())
+                <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+                    <div class="p-6 text-gray-900 dark:text-gray-100">
+                        <p class="text-center text-gray-500 dark:text-gray-300">No infrastructures yet.</p>
                     </div>
                 </div>
-            </div>
+            @else
+                <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+                    <div class="p-6 text-gray-900 dark:text-gray-100">
+                        <div class="grid grid-cols-1 gap-4 lg:grid-cols-3 lg:gap-8">
+                            @foreach ($infrastructures as $infrastructure)
+                                <x-infrastructure-card :infrastructure="$infrastructure" />
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
+            @endif
         </div>
     </div>
 </x-app-layout>

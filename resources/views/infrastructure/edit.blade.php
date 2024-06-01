@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('Add an Infrastructure') }}
+            {{ __('Edit Infrastructure') }}
         </h2>
     </x-slot>
     
@@ -10,118 +10,115 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900 dark:text-gray-100">
-                    <form action="{{ route('gestionnaire.infrastructure.store') }}" method="POST" enctype="multipart/form-data">
+                    <form action="{{ route('gestionnaire.infrastructure.update', $infrastructure) }}" method="POST" id="my-form" enctype="multipart/form-data">
                         @csrf
+                        @method('PATCH')
                         <div class="grid grid-cols-1 gap-10 sm:grid-cols-2">
                             <div >
 
                                 <div>
                                     <label for="name" class="block text-xl font-medium text-gray-700 dark:text-gray-200">Name</label>
-                                    <input type="text" name="name" id="name" autocomplete="given-name" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:bg-gray-700 dark:text-gray-200">
+                                    <input type="text" name="name" id="name" autocomplete="given-name" value="{{$infrastructure->name}}" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:bg-gray-700 dark:text-gray-200">
                                 </div>
                                 
                                 <div>
                                     <label for="ville" class="block text-xl font-medium text-gray-700 dark:text-gray-200">City</label>
-                                    <input type="text" name="ville" id="ville" autocomplete="ville" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:bg-gray-700 dark:text-gray-200">
+                                    <input type="text" name="ville" id="ville" autocomplete="ville" value="{{$infrastructure->ville}}" readonly class="mt-1 read-only:text-gray-500 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:bg-gray-700 dark:text-gray-200">
                                 </div>
                                 <div>
                                     <label for="cite" class="block text-xl font-medium text-gray-700 dark:text-gray-200">Address</label>
-                                    <input type="text" name="cite" id="cite" autocomplete="cite" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:bg-gray-700 dark:text-gray-200">
+                                    <input type="text" name="cite" id="cite" autocomplete="cite" value="{{$infrastructure->cite}}" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:bg-gray-700 dark:text-gray-200">
                                 </div>
                                 <div>
                                     <label for="infrastructable_type" class="block text-xl font-medium text-gray-700 dark:text-gray-200">Type</label>
-                                    <select name="infrastructable_type" id="infrastructable_type" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:bg-gray-700 dark:text-gray-200">
-                                        <option value="pool" selected>Pool</option>
-                                        <option value="stadium" >Stadium</option>
-                                        <option value="hall">Hall</option>
+                                    <select name="infrastructable_type" id="infrastructable_type" disabled value="{{$infrastructure->infrastructable_type}}" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:bg-gray-700 dark:text-gray-200">
+                                        <option value="pool" {{ $infrastructure->infrastructable_type == 'Pool' ? 'selected' : '' }}>Pool</option>
+                                        <option value="stadium" {{ $infrastructure->infrastructable_type == 'Stadium' ? 'selected' : '' }}>Stadium</option>
+                                        <option value="hall" {{ $infrastructure->infrastructable_type == 'Hall' ? 'selected' : '' }}>Hall</option>
                                     </select>
                                 </div>
                             
                                 <div id="category" class="mt-5">
-                                    <div id="type_pool" class="grid grid-cols-1 gap-0">
-                                            <label class="block text-md font-medium text-gray-700 dark:text-gray-200">Pool Type</label><br>
-                                            <div class="grid grid-cols-1 gap-6">
-
-                                                <div>
-                                                    <input type="radio"  name="pool_type" id="olympic" value="olympic" checked
-                                                    class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm sm:text-sm border-gray-300 rounded-md dark:bg-gray-700 dark:text-gray-200">
+                                    @if($infrastructure->infrastructable_type == 'Pool')
+                                        <label class="block text-md font-medium text-gray-700 dark:text-gray-200">Pool Type</label><br>
+                                        <div id="type_pool" class="grid grid-cols-1 gap-8">
+                                            <div>
+                                                <input type="radio"  name="pool_type" id="olympic" value="olympic" {{ ($infrastructure->getPool($infrastructure->infrastructable_id)->pool_type == 'olympic') ? 'checked' : '' }}
+                                                class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm sm:text-sm border-gray-300 rounded-md dark:bg-gray-700 dark:text-gray-200">
                                                 </input>
                                                 <label for="olympic" class="ms-4"> Olympic </label>
-                                                
+
                                             </div>
                                             <div>
-                                                <input type="radio"  name="pool_type" id="semi_olympic" value="semi_olympic" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500  shadow-sm sm:text-sm border-gray-300 rounded-md dark:bg-gray-700 dark:text-gray-200">
+                                                <input type="radio" {{ ($infrastructure->getPool($infrastructure->infrastructable_id)->pool_type == 'semi_olympic') ? 'checked' : '' }} name="pool_type" id="semi_olympic" value="semi_olympic" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500  shadow-sm sm:text-sm border-gray-300 rounded-md dark:bg-gray-700 dark:text-gray-200">
                                                 </input>
                                                 <label for="semi_olympic" class="ms-4"> Semi-Olympic </label>
                                                 
                                             </div>
                                             <div>
-                                                <input type="radio"   name="pool_type" id="private" value="private" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500  shadow-sm sm:text-sm border-gray-300 rounded-md dark:bg-gray-700 dark:text-gray-200">
+                                                <input type="radio"  {{ ($infrastructure->getPool($infrastructure->infrastructable_id)->pool_type == 'private') ? 'checked' : '' }} name="pool_type" id="private" value="private" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500  shadow-sm sm:text-sm border-gray-300 rounded-md dark:bg-gray-700 dark:text-gray-200">
                                                 </input>
                                                 <label for="private" class="ms-4"> Private </label>
                                                 
                                             </div>
                                         </div>
-                                    </div>
-                                    
-                                    <div id="type_stadium" class="grid grid-cols-1 gap-0 transition ease-linear duration-1000">
-                                        <label class="block text-md font-medium text-gray-700 dark:text-gray-200">Stadium Type</label><br>
-                                        {{-- <x-radio-image name="stadium_type" id="eleven" value="Eleven a side" image="images/eleven-a-side_stadium.jfif" alt="Eleven-a-Side" text="Eleven-a-Side"/> --}}
-                                        {{-- <x-radio-image name="stadium_type" id="seven" value="Seven a side" image="images/seven-a-side_stadium.jfif" alt="Seven-a-Side" text="Seven-a-Side"/> --}}
-                                        {{-- <x-radio-image name="stadium_type" id="five" value="Five a side" image="images/five-a-side_stadium.jpg" alt="Five-a-Side" text="Five-a-Side"/> --}}
-                                        <div class="grid grid-cols-1 gap-6">
-
+                                    @endif
+                                    @if($infrastructure->infrastructable_type == 'Stadium')
+                                    <label class="block text-md font-medium text-gray-700 dark:text-gray-200">Stadium Type</label><br>
+                                    <div id="type_stadium" class="grid grid-cols-1 gap-6 transition ease-linear duration-1000">
+                                            {{-- <x-radio-image name="stadium_type" id="eleven" value="Eleven a side" image="images/eleven-a-side_stadium.jfif" alt="Eleven-a-Side" text="Eleven-a-Side"/> --}}
+                                            {{-- <x-radio-image name="stadium_type" id="seven" value="Seven a side" image="images/seven-a-side_stadium.jfif" alt="Seven-a-Side" text="Seven-a-Side"/> --}}
+                                            {{-- <x-radio-image name="stadium_type" id="five" value="Five a side" image="images/five-a-side_stadium.jpg" alt="Five-a-Side" text="Five-a-Side"/> --}}
                                             <div>
-                                                <input type="radio"  name="stadium_type" id="eleven" value="Eleven a side" checked 
+                                                <input type="radio"  name="stadium_type" id="eleven" value="Eleven a side" {{ ($infrastructure->getStadium($infrastructure->infrastructable_id)->stadium_type == 'Eleven a side') ? 'checked' : '' }}
                                                 class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm sm:text-sm border-gray-300 rounded-md dark:bg-gray-700 dark:text-gray-200">
                                                 </input>
                                                 <label for="eleven" class="ms-4"> Eleven-a-Side </label>
-                                                
+
                                             </div>
                                             <div>
-                                                <input type="radio"  name="stadium_type" id="seven" value="Seven a side" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500  shadow-sm sm:text-sm border-gray-300 rounded-md dark:bg-gray-700 dark:text-gray-200">
-                                            </input>
+                                                <input type="radio" {{ ($infrastructure->getStadium($infrastructure->infrastructable_id)->stadium_type == 'Seven a side') ? 'checked' : '' }} name="stadium_type" id="seven" value="Seven a side" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500  shadow-sm sm:text-sm border-gray-300 rounded-md dark:bg-gray-700 dark:text-gray-200">
+                                                </input>
                                                 <label for="seven" class="ms-4"> Seven-a-Side</label>
                                                 
                                             </div>
                                             <div>
-                                                <input type="radio"   name="stadium_type" id="five" value="Five a side" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500  shadow-sm sm:text-sm border-gray-300 rounded-md dark:bg-gray-700 dark:text-gray-200">
-                                            </input>
+                                                <input type="radio"  {{ ($infrastructure->getStadium($infrastructure->infrastructable_id)->stadium_type == 'Five a side') ? 'checked' : '' }} name="stadium_type" id="five" value="Five a side" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500  shadow-sm sm:text-sm border-gray-300 rounded-md dark:bg-gray-700 dark:text-gray-200">
+                                                </input>
                                                 <label for="five" class="ms-4"> Five-a-Side </label>
                                                 
                                             </div>
                                         </div>
-                                    </div>
-                                    
-                                    <div id="type_hall" class="grid grid-cols-1 gap-0">
+                                    @endif
+                                    @if($infrastructure->infrastructable_type == 'Hall')
                                         <label class="block text-md font-medium text-gray-700 dark:text-gray-200">Hall Type</label><br>
+                                        <div id="type_hall" class="grid grid-cols-1 gap-6">
 
-                                        {{-- <x-radio-image name="hall_type" id="conference" value="conference" image="images/conference_hall.jfif" alt="Conference" text="Conference"/> --}}
-                                        {{-- <x-radio-image name="hall_type" id="concert" value="concert" image="images/concert_hall.jfif" alt="Concert" text="Concert"/> --}}
-                                        {{-- <x-radio-image name="hall_type" id="sport" value="sport" image="images/sport_hall.jfif" alt="Sport" text="Sport"/> --}}
-
-                                        <div class="grid grid-cols-1 gap-6">
+                                            {{-- <x-radio-image name="hall_type" id="conference" value="conference" image="images/conference_hall.jfif" alt="Conference" text="Conference"/> --}}
+                                            {{-- <x-radio-image name="hall_type" id="concert" value="concert" image="images/concert_hall.jfif" alt="Concert" text="Concert"/> --}}
+                                            {{-- <x-radio-image name="hall_type" id="sport" value="sport" image="images/sport_hall.jfif" alt="Sport" text="Sport"/> --}}
 
                                             <div>
-                                                <input type="radio"  name="hall_type" id="box" value="Box" checked
+                                                <input type="radio"  name="hall_type" id="box" value="Box" {{ ($infrastructure->getHall($infrastructure->infrastructable_id)->hall_type == 'Box') ? 'checked' : '' }}
                                                 class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm sm:text-sm border-gray-300 rounded-md dark:bg-gray-700 dark:text-gray-200">
                                                 </input>
                                                 <label for="box" class="ms-4"> Boxing hall </label>
+
                                             </div>
                                             <div>
-                                                <input type="radio"  name="hall_type" id="arts" value="Martial arts" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500  shadow-sm sm:text-sm border-gray-300 rounded-md dark:bg-gray-700 dark:text-gray-200">
+                                                <input type="radio" {{ ($infrastructure->getHall($infrastructure->infrastructable_id)->hall_type == 'Martial arts') ? 'checked' : '' }} name="hall_type" id="arts" value="Martial arts" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500  shadow-sm sm:text-sm border-gray-300 rounded-md dark:bg-gray-700 dark:text-gray-200">
                                                 </input>
                                                 <label for="arts" class="ms-4"> Martial arts hall (Judo, Karate..)</label>
+                                                
                                             </div>
                                             <div>
-                                                <input type="radio"   name="hall_type" id="multi" value="Multi-sports" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500  shadow-sm sm:text-sm border-gray-300 rounded-md dark:bg-gray-700 dark:text-gray-200">
+                                                <input type="radio"  {{ ($infrastructure->getHall($infrastructure->infrastructable_id)->hall_type == 'Multi-sports') ? 'checked' : '' }} name="hall_type" id="multi" value="Multi-sports" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500  shadow-sm sm:text-sm border-gray-300 rounded-md dark:bg-gray-700 dark:text-gray-200">
                                                 </input>
                                                 <label for="multi" class="ms-4"> Multi-sports hall (Handball, Basketball..)</label>
                                             </div>
+                                        
                                         </div>
-                                    
-                                    </div>
-                                    
+                                    @endif
                                 </div>
                                 
                             </div>
@@ -130,6 +127,9 @@
 
                                 <div class="mb-4">
                                     <label for="main_image" class="block text-xl font-medium text-gray-700 dark:text-gray-200">Main Image</label>
+                                    <div class="mb-4">
+                                        <img src="{{ asset('storage/' . $infrastructure->main_image) }}" alt="Current Image" style="max-width: 200px;">
+                                    </div>
                                     <input type="file" name="main_image" id="main_image" accept="image/*" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block 
                                     shadow-sm sm:text-sm 
                                     border-gray-300 rounded-md dark:bg-gray-700 dark:text-gray-200
@@ -149,7 +149,12 @@
                                 </div> 
                                 <div>
                                     <label for="description" class="block text-xl font-medium text-gray-700 dark:text-gray-200">Description</label>
-                                    <textarea name="description" id="description" placeholder="Write any other details.." autocomplete="description" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block h-40 w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:bg-gray-700 dark:text-gray-200"></textarea>
+                                    <textarea name="description" id="description" 
+                                    placeholder="Write any other details.." 
+                                    autocomplete="description" 
+                                    class="mt-1 focus:ring-indigo-500 
+                                    focus:border-indigo-500 block h-40 w-full shadow-sm sm:text-sm 
+                                    border-gray-300 rounded-md dark:bg-gray-700 dark:text-gray-200">{{$infrastructure->description}}</textarea>
                                 </div>
                             </div>
                         </div>
@@ -164,7 +169,7 @@
                         @endif
                         <div class="mt-6">
                             <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:bg-indigo-400 dark:hover:bg-indigo-500 dark:text-gray-900">
-                                Add
+                                Update
                             </button>
                         </div>
                     </form>
@@ -180,6 +185,11 @@
             const stadium = document.getElementById('type_stadium');
             const hall = document.getElementById('type_hall');
             const category = document.getElementById('category');
+
+            //setting the disable attribute in 'selectElement' element to false when submitting
+            document.getElementById('my-form').addEventListener('submit', function() {
+                selectElement.disabled = false;
+            });
 
             let selectedType = selectElement.value;
 
