@@ -6,7 +6,10 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReservationController;
 use App\Mail\TestMail;
+use App\Models\Gestionnaire;
 use App\Models\Infrastructure;
+use App\Models\Reservation;
+use App\Models\User;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 
@@ -56,7 +59,12 @@ Route::patch('/notifications/{id}/details', [NotificationController::class,'show
 //----------------- Routes for the Admin Panel -------------------
 
 Route::get('/dashboard', function () {
-    return view('dashboard');
+    // get the number of (accepted gestionnaires, clients, infrastructures, accepted reservations)
+    $gestionnaires = Gestionnaire::where('status', 'accepted')->count();
+    $clients = User::where('role', 'client')->count();
+    $infrastructures = Infrastructure::count();
+    $reservations = Reservation::where('etat', 'accepted')->count();
+    return view('dashboard', compact('gestionnaires', 'clients', 'infrastructures', 'reservations'));
 })->middleware(['admin','auth', 'verified'])->name('dashboard');
 
 
@@ -71,6 +79,10 @@ Route::resource("admin/gestionnaires", GestionnaireController::class)->middlewar
     ->name('edit','admin.gestionnaires.edit')->name('update','admin.gestionnaires.update')
     ->name('destroy','admin.gestionnaires.destroy');
 
+    Route::get('/admin/infarstructures', [InfrastructureController::class, 'index'])->middleware(['admin','auth', 'verified'])
+    ->name('admin.infrastructure.index');
+    Route::get('/admin/infarstructures/{infrastructure}', [InfrastructureController::class, 'details'])->middleware(['admin','auth', 'verified'])
+    ->name('admin.infrastructure.details');
 
 //------------------- Routes for the Gestionnaire Panel -------------------
 

@@ -21,12 +21,12 @@
                             <!-- Nom and Prenom -->
                             <div class="grid grid-cols-2 gap-4">
                                 <div>
-                                    <x-input-label for="nom" :value="__('Nom')" />
+                                    <x-input-label for="nom" :value="__('Family Name')" />
                                     <x-text-input id="nom" class="block w-full" type="text" name="nom" :value="old('nom')" required autofocus autocomplete="nom" />
                                     <x-input-error :messages="$errors->get('nom')" class="mt-2" />
                                 </div>
                                 <div>
-                                    <x-input-label for="prenom" :value="__('Prenom')" />
+                                    <x-input-label for="prenom" :value="__('First Name')" />
                                     <x-text-input id="prenom" class="block w-full" type="text" name="prenom" :value="old('prenom')" required autofocus autocomplete="prenom" />
                                     <x-input-error :messages="$errors->get('prenom')" class="mt-2" />
                                 </div>
@@ -41,7 +41,7 @@
                     
                             <!-- N Tel -->
                             <div>
-                                <x-input-label for="tel" :value="__('Numéro Téléphone')" />
+                                <x-input-label for="tel" :value="__('Phone Number')" />
                                 <x-text-input id="tel" class="block w-full" type="text" name="tel" :value="old('tel')" required autocomplete="tel" />
                                 <x-input-error :messages="$errors->get('tel')" class="mt-2" />
                             </div>

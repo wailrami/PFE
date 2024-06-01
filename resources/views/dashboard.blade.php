@@ -16,31 +16,38 @@
     </div>
  --}}
 
+ 
  <div class="flex flex-wrap justify-center">
-    <div class="bg-gray-300 w-64 h-64 dark:bg-gray-700 dark:text-white text-black border border-gray-300 m-4 rounded-lg shadow-md flex flex-col items-center justify-center text-center transform transition-all hover:scale-105 hover:shadow-xl">
-        <h3 class="text-lg font-semibold">Reservation Stat 1</h3>
-        <span class="text-4xl font-bold my-4">500</span>
-        <button class="bg-white text-blue-500 hover:bg-blue-200 py-2 px-4 rounded">Show More</button>
-    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-8">
 
-    <div class="bg-gray-300 w-64 h-64 dark:bg-gray-700 dark:text-white text-black border border-gray-300 m-4 rounded-lg shadow-md flex flex-col items-center justify-center text-center transform transition-all hover:scale-105 hover:shadow-xl">
-        <h3 class="text-lg font-semibold">Reservation Stat 2</h3>
-        <span class="text-4xl font-bold my-4">250</span>
-        <button class="bg-white text-green-500 hover:bg-green-200 py-2 px-4 rounded">Show More</button>
-    </div>
+        
+        <div class="bg-gray-300 size-96 p-4 dark:bg-gray-700 dark:text-white text-black border border-gray-300 m-4 rounded-lg shadow-md flex flex-col items-center justify-center text-center transform transition-all hover:scale-105 hover:shadow-xl">
+            <h3 class="text-2xl font-semibold">Number of Accepted Reservations</h3>
+            <span class="text-5xl font-bold my-4">{{$reservations}}</span>
+            {{-- <a href="{{route('dashboard')}}" class="bg-white text-yellow-500 hover:bg-yellow-200 py-2 px-4 rounded">Show More</a> --}}
+        </div>
+        
 
-    <div class="bg-gray-300 w-64 h-64 dark:bg-gray-700 dark:text-white text-black border border-gray-300 m-4 rounded-lg shadow-md flex flex-col items-center justify-center text-center transform transition-all hover:scale-105 hover:shadow-xl">
-        <h3 class="text-lg font-semibold">Reservation Stat 3</h3>
-        <span class="text-4xl font-bold my-4">1000</span>
-        <button class="bg-white text-yellow-500 hover:bg-yellow-200 py-2 px-4 rounded">Show More</button>
-    </div>
+        <div class="bg-gray-300 size-96 p-4 dark:bg-gray-700 dark:text-white text-black border border-gray-300 m-4 rounded-lg shadow-md flex flex-col items-center justify-center text-center transform transition-all hover:scale-105 hover:shadow-xl">
+            <h3 class="text-2xl font-semibold">Number of Clients</h3>
+            <span class="text-5xl font-bold my-4">{{$clients}}</span>
+            {{-- <a href="{{route('dashboard')}}" class="bg-white text-green-500 hover:bg-green-200 py-2 px-4 rounded">Show More</a> --}}
+        </div>
 
-    <div class="bg-gray-300 w-64 h-64 dark:bg-gray-700 dark:text-white text-black border border-gray-300 m-4 rounded-lg shadow-md flex flex-col items-center justify-center text-center transform transition-all hover:scale-105 hover:shadow-xl">
-        <h3 class="text-lg font-semibold">Rapports</h3>
-        <span class="text-4xl font-bold my-4">4</span>
-        <button class="bg-white text-red-500 hover:bg-red-200 py-2 px-4 rounded">Show More</button>
+
+        <div class="bg-gray-300 size-96 p-4 dark:bg-gray-700 dark:text-white text-black border border-gray-300 m-4 rounded-lg shadow-md flex flex-col items-center justify-center text-center transform transition-all hover:scale-105 hover:shadow-xl">
+            <h3 class="text-2xl font-semibold">Number of Managers</h3>
+            <span class="text-5xl font-bold my-4"> {{$gestionnaires}} </span>
+            <a href="{{route('admin.gestionnaires.index')}}" class="bg-white text-blue-500 hover:bg-blue-200 py-2 px-4 rounded">Show More</a>
+        </div>
+
+        <div class="bg-gray-300 size-96 p-4 dark:bg-gray-700 dark:text-white text-black border border-gray-300 m-4 rounded-lg shadow-md flex flex-col items-center justify-center text-center transform transition-all hover:scale-105 hover:shadow-xl">
+            <h3 class="text-2xl font-semibold">Number of Infrastructures</h3>
+            <span class="text-5xl font-bold my-4">{{$infrastructures}}</span>
+            <a href="{{route('admin.infrastructure.index')}}" class="bg-white text-red-500 hover:bg-red-200 py-2 px-4 rounded">Show More</a>
+        </div>
+        <!-- Add more squares as needed -->
     </div>
-    <!-- Add more squares as needed -->
 </div>
 
 <script>

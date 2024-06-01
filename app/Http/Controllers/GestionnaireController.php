@@ -89,13 +89,27 @@ class GestionnaireController extends Controller
     {
         //
         $request->validate([
-            'nom' => ['required', 'string', 'max:255'],
-            'prenom' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255'],
-            'tel' =>['required','string','min:10','max:10'],
+            'nom' => ['required', 'string', 'max:50',function($attribute, $value, $fail) {
+                if (!preg_match("/^[a-zA-Z ]*$/",$value)) {
+                    $fail('The '.$attribute.' must contain only letters and spaces');
+                }
+                if(ucfirst($value) != $value)
+                    $fail('The '.$attribute.' must start with a capital letter');
+            }],
+            'prenom' => ['required', 'string', 'max:100', function($attribute, $value, $fail) {
+                if (!preg_match("/^[a-zA-Z ]*$/",$value)) {
+                    $fail('The '.$attribute.' must contain only letters and spaces');
+                }
+                if(ucfirst($value) != $value)
+                    $fail('The '.$attribute.' must start with a capital letter');
+            }],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+            'tel' =>['required','digits:10','unique:'.User::class, 'regex:/^0[567]\d{8}$/'],
         ],[
-            'tel.min' => 'The phone number must contain 10 digits',
-            'tel.max' => 'The phone number must contain 10 digits',
+            'tel.regex' => 'The phone number must be a valid Algerian phone number',
+            'tel.digits' => 'The phone number must contain 10 digits',
+            'tel.unique' => 'This phone number is already used',
+            'email.unique' => 'This email is already used',
             'email.lowercase' => 'The email must be in lowercase',
             'nom.required' => 'The last name is required',
             'prenom.required' => 'The first name is required',
@@ -157,13 +171,25 @@ class GestionnaireController extends Controller
     public function storeRequest(Request $request)
     {
         $request->validate([
-            'nom' => ['required', 'string', 'max:255'],
-            'prenom' => ['required', 'string', 'max:255'],
+            'nom' => ['required', 'string', 'max:50',function($attribute, $value, $fail) {
+                if (!preg_match("/^[a-zA-Z ]*$/",$value)) {
+                    $fail('The '.$attribute.' must contain only letters and spaces');
+                }
+                if(ucfirst($value) != $value)
+                    $fail('The '.$attribute.' must start with a capital letter');
+            }],
+            'prenom' => ['required', 'string', 'max:100', function($attribute, $value, $fail) {
+                if (!preg_match("/^[a-zA-Z ]*$/",$value)) {
+                    $fail('The '.$attribute.' must contain only letters and spaces');
+                }
+                if(ucfirst($value) != $value)
+                    $fail('The '.$attribute.' must start with a capital letter');
+            }],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
-            'tel' =>['required','string','min:10','max:10'],
+            'tel' =>['required','digits:10','unique:'.User::class, 'regex:/^0[567]\d{8}$/'],
         ],[
-            'tel.min' => 'The phone number must contain 10 digits',
-            'tel.max' => 'The phone number must contain 10 digits',
+            'tel.regex' => 'The phone number must be a valid Algerian phone number',
+            'tel.digits' => 'The phone number must contain 10 digits',
             'tel.unique' => 'This phone number is already used',
             'email.unique' => 'This email is already used',
             'email.lowercase' => 'The email must be in lowercase',
@@ -204,7 +230,12 @@ class GestionnaireController extends Controller
     public function setPassword(Request $request ,$id)
     {
         $request->validate([
-            'password' => ['required', 'string', 'min:8', 'confirmed',Password::defaults()],
+            'password' => ['required', 'confirmed',Password::defaults()],
+        ],
+        [
+            'password.required' => 'The password is required',
+            'password.confirmed' => 'The password confirmation does not match',
+
         ]);
         $gestionnaire = Gestionnaire::find($id);
         $gestionnaire->user->password = Hash::make($request->password);

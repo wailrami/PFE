@@ -62,6 +62,16 @@
                                 </div>
                             </div>
                         </div>
+                    @else 
+                        @if (auth()->user()->role == 'admin')
+                            <div class="mb-4">
+                                <div class="grid grid-cols-1 sm:grid-cols-2">
+                                    <div class="p-4">
+                                        <a href="{{route('admin.infrastructure.index')}}" class="px-4 py-2 text-blue-500 rounded-md">Back</a>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
                     @endif
                 @endif
             </div>
