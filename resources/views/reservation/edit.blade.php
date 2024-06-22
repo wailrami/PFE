@@ -50,20 +50,19 @@
                         @enderror
                         <div class="mb-4">
                             <label for="start_time" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Start Time</label>
-                            <input type="time" name="start_time" min="06:00"  step="900" max="23:00" id="start_time" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:bg-gray-700 dark:text-gray-200" value="{{ $reservation->start_time }}">
+                            <input type="time" name="start_time" min="06:00"  step="1800" max="23:00" id="start_time" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:bg-gray-700 dark:text-gray-200" value="{{ $reservation->start_time }}">
                         </div>
                         @error('start_time')
                             <span class="text-red-500">{{ $message }}</span>
                         @enderror
                         <div class="mb-4">
                             <label for="end_time" class="block text-sm font-medium text-gray-700 dark:text-gray-200">End Time</label>
-                            <input type="time" name="end_time" min="06:15" step="900" max="23:30"  id="end_time" class="mt-1 focus
+                            <input type="time" name="end_time" min="06:30" step="1800" max="23:30"  id="end_time" class="mt-1 focus
                             :ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md dark:bg-gray-700 dark:text-gray-200" value="{{ $reservation->end_time }}">
                         </div>
                         @error('end_time')
                             <span class="text-red-500">{{ $message }}</span>
                         @enderror
-                        
                         <div class="mb-4">
                             <button type="submit" class="bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded">Update</button>
                         </div>

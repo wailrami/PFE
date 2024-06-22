@@ -35,45 +35,58 @@
                         <p class="text-xl font-semibold text-gray-500 dark:text-white">{{ $infrastructure->gestionnaire->user->nom.' '.$infrastructure->gestionnaire->user->prenom }}</p>
                     </div>
                 </div>
-                @if(auth()->user()->role == 'client')
-                    <div class="mb-4">
-                        <div class="grid grid-cols-1 sm:grid-cols-2">
-                            <div class="p-4">
-                                <a href="{{route('reservations.create', ['id' => $infrastructure->id])}}" class="px-4 py-2 bg-blue-500 text-white rounded-md">Reserve</a>
-                            </div>
-                            <div class="p-4">
-                                <a href="{{route('infrastructure.index')}}" class="px-4 py-2 text-blue-500 rounded-md">Back</a>
-                            </div>
-                        </div>
-                    </div>
-                @else
-                    @if (auth()->user()->role == 'gestionnaire')
+                @auth
+                    @if(auth()->user()->role == 'client')
                         <div class="mb-4">
-                            <div class="grid grid-cols-1 sm:grid-cols-2 align-middle">
+                            <div class="grid grid-cols-1 sm:grid-cols-2">
                                 <div class="p-4">
-                                    <a href="{{route('gestionnaire.infrastructure.edit', $infrastructure)}}" class="px-4 py-2 bg-blue-500 text-white rounded-md">Edit</a>
+                                    <a href="{{route('reservations.create', ['id' => $infrastructure->id])}}" class="px-4 py-2 bg-blue-500 text-white rounded-md">Reserve</a>
                                 </div>
                                 <div class="p-4">
-                                    <form action="{{route("gestionnaire.infrastructure.destroy", $infrastructure)}}" method="post" class="inline">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="px-4 py-2 bg-red-500 text-white rounded-md">Delete</button>
-                                    </form>
+                                    <a href="{{route('infrastructure.index')}}" class="px-4 py-2 text-blue-500 rounded-md">Back</a>
                                 </div>
                             </div>
                         </div>
-                    @else 
-                        @if (auth()->user()->role == 'admin')
+                    @else
+                        @if (auth()->user()->role == 'gestionnaire')
                             <div class="mb-4">
-                                <div class="grid grid-cols-1 sm:grid-cols-2">
+                                <div class="grid grid-cols-1 sm:grid-cols-2 align-middle">
                                     <div class="p-4">
-                                        <a href="{{route('admin.infrastructure.index')}}" class="px-4 py-2 text-blue-500 rounded-md">Back</a>
+                                        <a href="{{route('gestionnaire.infrastructure.edit', $infrastructure)}}" class="px-4 py-2 bg-blue-500 text-white rounded-md">Edit</a>
+                                    </div>
+                                    <div class="p-4">
+                                        <form action="{{route("gestionnaire.infrastructure.destroy", $infrastructure)}}" method="post" class="inline">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="px-4 py-2 bg-red-500 text-white rounded-md">Delete</button>
+                                        </form>
                                     </div>
                                 </div>
                             </div>
+                        @else 
+                            @if (auth()->user()->role == 'admin')
+                                <div class="mb-4">
+                                    <div class="grid grid-cols-1 sm:grid-cols-2">
+                                        <div class="p-4">
+                                            <a href="{{route('admin.infrastructure.index')}}" class="px-4 py-2 text-blue-500 rounded-md">Back</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
                         @endif
                     @endif
-                @endif
+                @else
+                    <div class="mb-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-2">
+                            <div class="p-4">
+                                <a href="{{route('reservations.create', ['id' => $infrastructure->id])}}" class="px-4 py-2 bg-blue-500 text-white rounded-md">Login and Reserve</a>
+                            </div>
+                            <div class="p-4">
+                                <a href="{{route('guest.infrastructure.index')}}" class="px-4 py-2 text-blue-500 rounded-md">Back</a>
+                            </div>
+                        </div>
+                    </div>
+                @endauth
             </div>
         </div>
         <div class="p-4 mx-4 bg-slate-200 h-fit">
@@ -93,11 +106,11 @@
         </div>
     </div>
 
-    <h2 class="mx-7 font-bold text-3xl text-gray-500 dark:text-white">More Photos for this infrastructure</h2>
-    <div class="grid grid-cols-1 gap-4 sm:grid-cols-3 mb-10">
+    <h2 class="mx-10 font-bold text-3xl text-gray-500 dark:text-white">More Photos for this infrastructure</h2>
+    <div class="py-12 px-16 grid grid-cols-1 gap-4 sm:grid-cols-3 mb-10">
         @foreach($images as $image)
         <div>
-            <img src="{{ asset('storage/' . $infrastructure->main_image) }}" alt="{{ $infrastructure->name }}" />
+            <img class="size-96" src="{{ asset('storage/' . $image->image) }}" alt="{{ $infrastructure->name }}" />
         </div>
         @endforeach
     </div>

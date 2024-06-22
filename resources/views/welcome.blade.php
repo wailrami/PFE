@@ -38,6 +38,7 @@
                     
                     @else
                         <div class="space-x-4">
+                            <a href="{{route('register.gestionnaire')}}" class="bg-cyan-500 text-black font-bold py-2 px-6 rounded-md hover:bg-cyan-600 transition-colors duration-300">Be a Manager</a>
                             <a href="{{route('register')}}" class="bg-cyan-500 text-black font-bold py-2 px-6 rounded-md hover:bg-cyan-600 transition-colors duration-300">Sign Up</a>
                             <a href="{{route('login')}}" class="bg-gray-800 text-white font-bold py-2 px-6 rounded-md hover:bg-gray-700 transition-colors duration-300">Login</a>
                         </div>
@@ -51,7 +52,7 @@
                 <section class="bg-cover bg-center h-screen flex flex-col justify-center items-center text-white" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1579952363873-27f3bade9f55?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80')">
                     <h1 class="text-5xl font-bold uppercase">Crino Stadium Reservations</h1>
                     <p class="text-lg uppercase text-gray-300 my-4">Secure your events at top-tier sports venues using Crino, the digital asset revolution.</p>
-                    <a href="{{route('infrastructure.index')}}" class="bg-cyan-500 text-black font-bold py-2 px-6 rounded-md hover:bg-cyan-600 transition-colors duration-300">Reserve a Stadium</a>
+                    <a href="{{route('redirect')}}" class="bg-cyan-500 text-black font-bold py-2 px-6 rounded-md hover:bg-cyan-600 transition-colors duration-300">Reserve Now</a>
                 </section>
                 <section class="bg-white py-16">
                     <div class="container mx-auto px-6">

@@ -18,6 +18,9 @@
                         </div>
                     @endif
                     <div class="mx-auto">
+                        @php
+                            $notifications = $notifications->sortByDesc('created_at');
+                        @endphp
                         @foreach ($notifications as $notification)
                             <x-notification-card :notification="$notification" />
                         @endforeach

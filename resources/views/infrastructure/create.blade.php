@@ -66,9 +66,6 @@
                                     
                                     <div id="type_stadium" class="grid grid-cols-1 gap-0 transition ease-linear duration-1000">
                                         <label class="block text-md font-medium text-gray-700 dark:text-gray-200">Stadium Type</label><br>
-                                        {{-- <x-radio-image name="stadium_type" id="eleven" value="Eleven a side" image="images/eleven-a-side_stadium.jfif" alt="Eleven-a-Side" text="Eleven-a-Side"/> --}}
-                                        {{-- <x-radio-image name="stadium_type" id="seven" value="Seven a side" image="images/seven-a-side_stadium.jfif" alt="Seven-a-Side" text="Seven-a-Side"/> --}}
-                                        {{-- <x-radio-image name="stadium_type" id="five" value="Five a side" image="images/five-a-side_stadium.jpg" alt="Five-a-Side" text="Five-a-Side"/> --}}
                                         <div class="grid grid-cols-1 gap-6">
 
                                             <div>
@@ -95,11 +92,6 @@
                                     
                                     <div id="type_hall" class="grid grid-cols-1 gap-0">
                                         <label class="block text-md font-medium text-gray-700 dark:text-gray-200">Hall Type</label><br>
-
-                                        {{-- <x-radio-image name="hall_type" id="conference" value="conference" image="images/conference_hall.jfif" alt="Conference" text="Conference"/> --}}
-                                        {{-- <x-radio-image name="hall_type" id="concert" value="concert" image="images/concert_hall.jfif" alt="Concert" text="Concert"/> --}}
-                                        {{-- <x-radio-image name="hall_type" id="sport" value="sport" image="images/sport_hall.jfif" alt="Sport" text="Sport"/> --}}
-
                                         <div class="grid grid-cols-1 gap-6">
 
                                             <div>

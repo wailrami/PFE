@@ -8,7 +8,10 @@ use App\Models\Infrastructure;
 use App\Models\Pool;
 use App\Models\Stadium;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+
+use function Clue\StreamFilter\append;
 
 class InfrastructureController extends Controller
 {
@@ -28,7 +31,8 @@ class InfrastructureController extends Controller
     public function store(Request $request)
     {
 
-        
+        //dd(session('uploadedFiles'));
+
         $request->validate([
             'name' => 'required',
             'ville' => 'required',
@@ -91,77 +95,125 @@ class InfrastructureController extends Controller
         $infrastructure->main_image = $imageFile->store('images', 'public');
         $infrastructure->main_image_mime = $imageFile->getMimeType();
 
-        if ($request->hasFile('images')){
-            
-            foreach ($request->file('images') as $imageFile) {
-                $image = new Image();
-                $image->image = file_get_contents($imageFile->getRealPath());
-                $image->mime = $imageFile->getMimeType();
-                $image->infrastructure()->associate($infrastructure);
-                $image->save();
-            }
-        }
+        $uploadedFiles = session()->get('uploadedFiles', []);
+        foreach ($uploadedFiles as $file) {
+            // Decode the base64 encoded file content
+            $decodedContent = base64_decode($file['file']);
 
+            // Create a temporary file
+            $tempFile = tempnam(sys_get_temp_dir(), 'upload');
+            file_put_contents($tempFile, $decodedContent);
+
+            // Create a file object for storage
+            $fileObject = new \Illuminate\Http\File($tempFile);
+
+            // Store the file in the desired directory and get the path
+            $filePath = Storage::disk('public')->put('images', $fileObject);
+
+            // Remove the temporary file
+            unlink($tempFile);
+
+            $image = new Image();
+            $image->image = $filePath;
+            $image->mime = $file['mime'];
+            $image->infrastructure()->associate($infrastructure);
+            $image->save();
+        }
         $infrastructure->gestionnaire()->associate(auth()->user()->gestionnaire);
         try {
             $infrastructure->save();
         } catch (\Illuminate\Database\QueryException $e) {
             dd($e->getMessage());
         }
+
+        session()->forget('uploadedFiles');
         
-        return redirect()->route('infrastructure.index')
+        return redirect()->route('gestionnaire.infrastructure.index')
             ->with('success', 'The infrastructure ' . $infrastructure->name . ' has been created successfully.');
     }
 
 
 
     public function upload(Request $request)
-    {
-        $data = array();
+{
+    $data = array();
 
-        $validator = Validator::make($request->all(), [
-            'file' => 'mimes:png,jpg,jpeg,pdf,jfif|max:2048'
-        ]);
+    $validator = Validator::make($request->all(), [
+        'file' => 'mimes:png,jpg,jpeg,pdf,jfif|max:2048'
+    ],
+    [
+        'file.mimes' => 'Invalid file type. Only PNG, JPG, JPEG, PDF, JFIF files are allowed.',
+        'file.max' => 'Maximum file size to upload is 2MB.'
+    ]);
 
-        if ($validator->fails()) {
-            
-            $data['success'] = 0;
-            $data['error'] = $validator->errors()->first('file');// Error response
-            
-        }else{
-            if($request->file('file')) {
-                
-                $file = $request->file('file');
-                $filename = time().'_'.$file->getClientOriginalName();
+    if ($validator->fails()) {
+        $data['success'] = 0;
+        $data['error'] = $validator->errors()->first('images'); // Error response
+    } else {
+        if ($request->hasFile('images')) {
+            $files = $request->file('images');
+            $uploadedFiles = session()->get('uploadedFiles', []);
 
-                // File upload location
-                $location = 'files';
+            foreach ($files as $file) {
+                $filename = $file->getClientOriginalName();
 
-                if(is_writable($location))
-                {
-                    // Upload file
-                    $file->move($location,$filename);
-                    // Response
-                    $data['success'] = 1;
-                    $data['message'] = 'Uploaded Successfully!';
-
-                }else{
-                    // Response
-                    $data['success'] = 0;
-                    $data['message'] = 'Destination is not writable.';
-                }
-
-
-
-            }else{
-                    // Response
-                    $data['success'] = 0;
-                    $data['message'] = 'File not uploaded.'; 
+                // Temporarily store the file in the session
+                $uploadedFiles[] = [
+                    'name' => $filename,
+                    'file' => base64_encode(file_get_contents($file->getRealPath())),
+                    'mime' => $file->getClientMimeType(),
+                ];
             }
-        }
 
-        return response()->json($data);
+            session(['uploadedFiles' => $uploadedFiles]);
+
+            $data['success'] = 1;
+            $data['message'] = 'Uploaded Successfully!';
+            $data['filenames'] = array_column($uploadedFiles, 'name');
+        } else {
+            $data['success'] = 0;
+            $data['message'] = 'File not uploaded.';
+        }
     }
+
+    return response()->json($data);
+}
+
+public function clearUploadedFiles()
+{
+    session()->forget('uploadedFiles');
+    return response()->json(['success' => true]);
+}
+
+
+public function delete(Request $request)
+{
+    $data = array();
+
+    $filename = $request->get('filename');
+    $uploadedFiles = session()->get('uploadedFiles', []);
+
+    $fileFound = false;
+    foreach ($uploadedFiles as $key => $file) {
+        if ($file['name'] === $filename) {
+            unset($uploadedFiles[$key]);
+            session(['uploadedFiles' => array_values($uploadedFiles)]); // Reindex array
+
+            $fileFound = true;
+            break;
+        }
+    }
+
+    if ($fileFound) {
+        $data['success'] = 1;
+        $data['message'] = 'File deleted successfully!';
+    } else {
+        $data['success'] = 0;
+        $data['message'] = 'File not found!';
+    }
+
+    return response()->json($data);
+}
 
 
 
@@ -184,10 +236,17 @@ class InfrastructureController extends Controller
 
     public function update(Request $request, Infrastructure $infrastructure)
     {
+        
         $request->validate([
             'name' => 'required',
-            'ville' => 'required',
-            'cite' => 'required',
+            'ville' => 'required' , function($attribute, $value, $fail) {
+                if (!preg_match("/^[a-zA-Z ]*$/",$value)) {
+                    $fail('The '.$attribute.' must contain only letters and spaces');
+                }
+                if(ucfirst($value) != $value)
+                    $fail('The '.$attribute.' must start with a capital letter');
+            },
+            'cite' => 'required', 'max:255',
             'infrastructable_type' => 'required',
             'main_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,jfif|max:2048',
             'images' => 'nullable|array',
@@ -238,14 +297,29 @@ class InfrastructureController extends Controller
             $infrastructure->main_image_mime = $imageFile->getMimeType();
         }
 
-        if ($request->hasFile('images')){
-            foreach ($request->file('images') as $imageFile) {
-                $image = new Image();
-                $image->image = file_get_contents($imageFile->getRealPath());
-                $image->mime = $imageFile->getMimeType();
-                $image->infrastructure()->associate($infrastructure);
-                $image->save();
-            }
+        $uploadedFiles = session()->get('uploadedFiles', []);
+        foreach ($uploadedFiles as $file) {
+            // Decode the base64 encoded file content
+            $decodedContent = base64_decode($file['file']);
+            
+            // Create a temporary file
+            $tempFile = tempnam(sys_get_temp_dir(), 'upload');
+            file_put_contents($tempFile, $decodedContent);
+            
+            // Create a file object for storage
+            $fileObject = new \Illuminate\Http\File($tempFile);
+            
+            // Store the file in the desired directory and get the path
+            $filePath = Storage::disk('public')->put('images', $fileObject);
+            
+            // Remove the temporary file
+            unlink($tempFile);
+            
+            $image = new Image();
+            $image->image = $filePath;
+            $image->mime = $file['mime'];
+            $image->infrastructure()->associate($infrastructure);
+            $image->save();
         }
 
         $infrastructure->save();
@@ -268,7 +342,7 @@ class InfrastructureController extends Controller
         $infrastructure->infrastructable->delete();
         $infrastructure->delete();
 
-        return redirect()->route('infrastructure.index')
+        return redirect()->route('gestionnaire.infrastructure.index')
             ->with('success', 'Infrastructure deleted successfully');
     }
 
@@ -276,7 +350,15 @@ class InfrastructureController extends Controller
     {
         $search = $request->get('search');
         $infrastructures = Infrastructure::where('name', 'like', '%' . $search . '%')->get();
-        return view('infrastructure.index', compact('infrastructures'));
+        if(auth()->check())
+        {
+            if(auth()->user()->role == 'client')
+                return view('infrastructure.index', compact('infrastructures'));
+            else if(auth()->user()->role == 'admin')
+                return view('admin.infrastructure.index', compact('infrast  ructures'));
+        }
+        else 
+            return view('guest.infrastructure.index', compact('infrastructures'));
     }
 
 
@@ -285,7 +367,17 @@ class InfrastructureController extends Controller
     {
         $filter = $request->get('filter');
         $infrastructures = Infrastructure::where('infrastructable_type',$filter)->get();
-        return view('infrastructure.index', compact('infrastructures'));
+
+        if(auth()->check())
+        {
+
+            if(auth()->user()->role == 'client')
+                return view('infrastructure.index', compact('infrastructures'));
+            else if(auth()->user()->role == 'admin')
+                return view('admin.infrastructure.index', compact('infrastructures'));
+        }
+        else
+            return view('guest.infrastructure.index', compact('infrastructures'));
     }
 
 

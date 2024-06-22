@@ -5,14 +5,16 @@ use App\Http\Controllers\InfrastructureController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReservationController;
+use App\Mail\ContactMail;
 use App\Mail\TestMail;
 use App\Models\Gestionnaire;
 use App\Models\Infrastructure;
 use App\Models\Reservation;
 use App\Models\User;
+
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
-
+use Illuminate\Http\Request;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -41,9 +43,34 @@ Route::get('/contact', function () {
     return view('contact_us');
 })->name('contact');
 
+Route::post('/contact/send', function (Request $request) {
+    $message = $request->msg;
+    Mail::to('admin@support.com')->send(new ContactMail($message, $request->email));
+    return redirect()->route('contact')->with('success', 'Message sent successfully');
+})->name('contact.send');
+
+
 Route::get('/about', function () {
     return view('about');
 })->name('about');
+
+Route::post('/clear-uploaded-files', [InfrastructureController::class, 'clearUploadedFiles']);
+
+
+Route::get('/redirect', function () {
+    if(auth()->check()){  
+        if(auth()->user()->role == 'admin'){
+            return redirect()->route('admin.infrastructure.index');
+        }elseif(auth()->user()->role == 'gestionnaire'){
+            return redirect()->route('gestionnaire.infrastructure.index');
+        }elseif(auth()->user()->role == 'client'){
+            return redirect()->route('infrastructure.index');
+        }
+    }
+    else{
+        return redirect()->route('guest.infrastructure.index');
+    }
+})->name('redirect');
 
 
 // Notification routes
@@ -84,6 +111,11 @@ Route::resource("admin/gestionnaires", GestionnaireController::class)->middlewar
     Route::get('/admin/infarstructures/{infrastructure}', [InfrastructureController::class, 'details'])->middleware(['admin','auth', 'verified'])
     ->name('admin.infrastructure.details');
 
+    Route::get('/admin/infrastructure/search', [InfrastructureController::class, 'search'])->middleware(['admin','auth', 'verified'])
+    ->name('admin.infrastructure.search');
+    Route::get('/admin/infrastructure/filter', [InfrastructureController::class, 'filter'])->middleware(['admin','auth', 'verified'])
+    ->name('admin.infrastructure.filter');
+
 //------------------- Routes for the Gestionnaire Panel -------------------
 
 // Route::get('/gestionnaire', function () {
@@ -94,6 +126,9 @@ Route::prefix('gestionnaire/reservations')->middleware('gestionnaire','auth','ve
     Route::get('requests', [ReservationController::class, 'requests'])->name('gestionnaire.reservations.requests');
     Route::post('requests/{id}/accept', [ReservationController::class, 'accept'])->name('gestionnaire.reservations.accept');
     Route::post('requests/{id}/reject', [ReservationController::class, 'reject'])->name('gestionnaire.reservations.reject');
+    // accept/reject periodic reservation routes
+    Route::post('requests/{id}/accept-periodic', [ReservationController::class, 'acceptPeriodic'])->name('gestionnaire.reservations.acceptPeriodic');
+    Route::post('requests/{id}/reject-periodic', [ReservationController::class, 'rejectPeriodic'])->name('gestionnaire.reservations.rejectPeriodic');
 
 }); 
 
@@ -115,6 +150,8 @@ Route::resource("gestionnaire/infrastructure", InfrastructureController::class)-
     ->name('destroy','gestionnaire.infrastructure.destroy');
 
 Route::post('/upload', [InfrastructureController::class, 'upload'])->name('upload');
+Route::delete('/delete', [InfrastructureController::class, 'delete'])->name('delete');
+
 
 
 //------------------- Routes for the Client Panel -------------------
@@ -137,6 +174,14 @@ Route::resource("reservations", ReservationController::class)->middleware('clien
     ->name('edit','reservations.edit')->name('update','reservations.update')
     ->name('destroy','reservations.destroy');
 
+Route::get('/reservations/{reservation}/cancel-periodic', [ReservationController::class, 'cancelPeriodic'])->middleware(['client','auth', 'verified'])
+->name('reservations.cancelPeriodic');
+// edit periodic reservation routes
+Route::get('/reservations/{periodicReservation}/edit-periodic', [ReservationController::class, 'editPeriodic'])->middleware(['client','auth', 'verified'])
+->name('reservations.editPeriodic');
+Route::put('/reservations/{periodicReservation}/update-periodic', [ReservationController::class, 'updatePeriodic'])->middleware(['client','auth', 'verified'])
+->name('reservations.updatePeriodic');
+
 
 //------------------- Routes for the Authentification -------------------
 
@@ -152,6 +197,23 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    
 });
+
+
+//---------------------Guest Routes---------------------------------------
+
+// list infrastructure with search and filter and details and routes for guest
+Route::get('/guest/infarstructures', [InfrastructureController::class, 'index'])->middleware('guest')
+->name('guest.infrastructure.index');
+Route::get('/guest/infarstructures/{infrastructure}', [InfrastructureController::class, 'details'])->middleware('guest')
+->name('guest.infrastructure.details');
+
+Route::get('/guest/infrastructure/search', [InfrastructureController::class, 'search'])->middleware('guest')
+->name('guest.infrastructure.search');
+Route::get('/guest/infrastructure/filter', [InfrastructureController::class, 'filter'])->middleware('guest')
+->name('guest.infrastructure.filter');
+
+
 
 require __DIR__.'/auth.php';

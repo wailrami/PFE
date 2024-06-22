@@ -44,7 +44,7 @@
                             </li>
                             <li>
                                 <i class="fas fa-envelope text-cyan-500 mr-4"></i>
-                                <span class="font-bold">Email:</span> adimn@support.com
+                                <span class="font-bold">Email:</span> admin@support.com
                             </li>
                         </ul>
                     </div>
@@ -62,7 +62,7 @@
                             </div>
                             <div>
                                 <label for="message" class="block font-bold mb-2">Message</label>
-                                <textarea id="message" name="message" rows="5" class="w-full border-gray-300 rounded py-2 px-3 focus:outline-none focus:ring-2 focus:ring-cyan-500" placeholder="Enter your message" required></textarea>
+                                <textarea id="message" name="msg" rows="5" class="w-full border-gray-300 rounded py-2 px-3 focus:outline-none focus:ring-2 focus:ring-cyan-500" placeholder="Enter your message" required></textarea>
                             </div>
                             <button type="submit" class="bg-gray-800 hover:bg-cyan-600 text-white font-bold py-2 px-4 rounded transition-colors duration-300">Submit</button>
                         </form>

@@ -10,13 +10,18 @@ class Reservation extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['res_date','start_time','end_time', 'etat', 'infrastructure_id', 'client_id'];
+    protected $fillable = ['periodic_reservation_id','res_date','start_time','end_time', 'etat', 'infrastructure_id', 'client_id'];
 
     public function client():BelongsTo
     {
         return $this->belongsTo(Client::class);
     }
 
+    
+    public function periodicReservation():BelongsTo
+    {
+        return $this->belongsTo(ReservationPeriodique::class);
+    }
 
     public function infrastructure():BelongsTo
     {
@@ -43,6 +48,7 @@ class Reservation extends Model
         }
         return true;
     }
+
 
 
 }

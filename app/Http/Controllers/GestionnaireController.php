@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\AddedManager;
 use App\Mail\ResultMail;
 use App\Models\Gestionnaire;
 use App\Models\User;
@@ -40,29 +41,61 @@ class GestionnaireController extends Controller
     public function store(Request $request)
     {
         //
-        $requestData = $request->all();
+        $validatedData = $request->validate([
+            'nom' => ['required', 'string', 'max:50',function($attribute, $value, $fail) {
+                if (!preg_match("/^[a-zA-Z ]*$/",$value)) {
+                    $fail('The Family Name must contain only letters and spaces');
+                }
+                if(ucfirst($value) != $value)
+                    $fail('The Family Name must start with a capital letter');
+            }],
+            'prenom' => ['required', 'string', 'max:100', function($attribute, $value, $fail) {
+                if (!preg_match("/^[a-zA-Z ]*$/",$value)) {
+                    $fail('The First Name must contain only letters and spaces');
+                }
+                if(ucfirst($value) != $value)
+                    $fail('The First Name must start with a capital letter');
+            }],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+            'tel' =>['required','digits:10','unique:'.User::class, 'regex:/^0[567]\d{8}$/'],
+            // 'password' => ['required', 'confirmed',Password::defaults()],
+        ],[
+            'tel.regex' => 'The phone number must be a valid Algerian phone number',
+            'tel.digits' => 'The phone number must contain 10 digits',
+            'tel.unique' => 'This phone number is already used',
+            'email.unique' => 'This email is already used',
+            'email.lowercase' => 'The email must be in lowercase',
+            'nom.required' => 'The Family name is required',
+            'prenom.required' => 'The first name is required',
+            'email.required' => 'The email is required',
+            'tel.required' => 'The phone number is required',
+            // 'password.required' => 'The password is required',
+            // 'password.confirmed' => 'The password confirmation does not match',
+        ]);
 
         $user = new User();
-        $user->nom = $requestData['nom'];
-        $user->prenom = $requestData['prenom'];
-        $user->email = $requestData['email'];
-        $user->password = bcrypt($requestData['password']);
+        $user->nom = $validatedData['nom'];
+        $user->prenom = $validatedData['prenom'];
+        $user->email = $validatedData['email'];
         $user->role = 'gestionnaire';
-        $user->tel = $requestData['tel'];
+        $user->tel = $validatedData['tel'];
+        $user->password = bcrypt(Str::random(8));
         $user->email_verified_at = now();
         $user->remember_token = Str::random(10);
         $user->created_at = now();
         $user->updated_at = now();
         $user->save();
-        Gestionnaire::create([
+        $gestionnaire = Gestionnaire::create([
             'user_id' => $user->id,
+            'status' => 'accepted',
         ]);
 
         event(new Registered($user));
+        Mail::to($user->email)->send(new AddedManager($gestionnaire));
 
-        Auth::login($user);
+        //Auth::login($user);
         
-        return redirect()->route('admin.gestionnaires');
+        return redirect()->route('admin.gestionnaires.index');
     }
 
     /**
@@ -91,17 +124,17 @@ class GestionnaireController extends Controller
         $request->validate([
             'nom' => ['required', 'string', 'max:50',function($attribute, $value, $fail) {
                 if (!preg_match("/^[a-zA-Z ]*$/",$value)) {
-                    $fail('The '.$attribute.' must contain only letters and spaces');
+                    $fail('The Family Name must contain only letters and spaces');
                 }
                 if(ucfirst($value) != $value)
-                    $fail('The '.$attribute.' must start with a capital letter');
+                    $fail('The Family Name must start with a capital letter');
             }],
             'prenom' => ['required', 'string', 'max:100', function($attribute, $value, $fail) {
                 if (!preg_match("/^[a-zA-Z ]*$/",$value)) {
-                    $fail('The '.$attribute.' must contain only letters and spaces');
+                    $fail('The First Name must contain only letters and spaces');
                 }
                 if(ucfirst($value) != $value)
-                    $fail('The '.$attribute.' must start with a capital letter');
+                    $fail('The First Name must start with a capital letter');
             }],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'tel' =>['required','digits:10','unique:'.User::class, 'regex:/^0[567]\d{8}$/'],
@@ -111,7 +144,7 @@ class GestionnaireController extends Controller
             'tel.unique' => 'This phone number is already used',
             'email.unique' => 'This email is already used',
             'email.lowercase' => 'The email must be in lowercase',
-            'nom.required' => 'The last name is required',
+            'nom.required' => 'The Family name is required',
             'prenom.required' => 'The first name is required',
             'email.required' => 'The email is required',
             'tel.required' => 'The phone number is required',
@@ -173,17 +206,17 @@ class GestionnaireController extends Controller
         $request->validate([
             'nom' => ['required', 'string', 'max:50',function($attribute, $value, $fail) {
                 if (!preg_match("/^[a-zA-Z ]*$/",$value)) {
-                    $fail('The '.$attribute.' must contain only letters and spaces');
+                    $fail('The Family Name must contain only letters and spaces');
                 }
                 if(ucfirst($value) != $value)
-                    $fail('The '.$attribute.' must start with a capital letter');
+                    $fail('The Family Name must start with a capital letter');
             }],
             'prenom' => ['required', 'string', 'max:100', function($attribute, $value, $fail) {
                 if (!preg_match("/^[a-zA-Z ]*$/",$value)) {
-                    $fail('The '.$attribute.' must contain only letters and spaces');
+                    $fail('The First Name must contain only letters and spaces');
                 }
                 if(ucfirst($value) != $value)
-                    $fail('The '.$attribute.' must start with a capital letter');
+                    $fail('The First Name must start with a capital letter');
             }],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'tel' =>['required','digits:10','unique:'.User::class, 'regex:/^0[567]\d{8}$/'],
@@ -193,7 +226,7 @@ class GestionnaireController extends Controller
             'tel.unique' => 'This phone number is already used',
             'email.unique' => 'This email is already used',
             'email.lowercase' => 'The email must be in lowercase',
-            'nom.required' => 'The last name is required',
+            'nom.required' => 'The Family name is required',
             'prenom.required' => 'The first name is required',
             'email.required' => 'The email is required',
             'tel.required' => 'The phone number is required',

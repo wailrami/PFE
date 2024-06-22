@@ -10,6 +10,7 @@ class Image extends Model
     use HasFactory;
 
     protected $fillable = ['image', 'mime','infrastructure_id'];
+    protected $table = 'images';
 
     public function infrastructure()
     {

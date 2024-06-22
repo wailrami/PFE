@@ -43,4 +43,9 @@ class Gestionnaire extends Model
     {
         return $this->hasManyThrough(Reservation::class,Infrastructure::class);
     }
+
+    public function periodicReservations():HasManyThrough
+    {
+        return $this->hasManyThrough(ReservationPeriodique::class,Infrastructure::class);
+    }
 }
