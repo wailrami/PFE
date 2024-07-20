@@ -36,6 +36,19 @@ class ReservationController extends Controller
         return view('reservation.my_reservations', compact('reservations', 'periodicReservations'));
     }
 
+    public function indexApi(Request $request)
+    {
+        $request->user()->load('client');
+        $reservations = Reservation::where('client_id', $request->user()->client->id)
+        ->orderByRaw("FIELD(etat, 'enattente', 'accepte', 'refuse')")
+        ->get();
+        $periodicReservations = ReservationPeriodique::where('client_id', $request->user()->client->id)
+        ->orderByRaw("FIELD(etat, 'pending', 'accepted', 'rejected')")
+        ->get();
+        
+        return response()->json(['reservations' => $reservations, 'periodic_reservations' => $periodicReservations]);
+    }
+
     /**
      * Show the form for creating a new resource.
      */
@@ -517,6 +530,7 @@ class ReservationController extends Controller
         return redirect()->route('reservations.index')
         ->with('success', 'Periodic reservation cancelled successfully!');
     }
+
 
     
 }

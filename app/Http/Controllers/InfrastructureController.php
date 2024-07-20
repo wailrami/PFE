@@ -23,6 +23,16 @@ class InfrastructureController extends Controller
         return view('infrastructure.index', compact('infrastructures'));
     }
 
+    public function indexApi()
+    {
+        //i want to set the url of each main_image without modifying inn the database, just for the api data
+        $infrastructures = Infrastructure::all();
+        foreach ($infrastructures as $infrastructure) {
+            $infrastructure->main_image = url('storage/' . $infrastructure->main_image);
+        }
+        return response()->json($infrastructures);
+    }
+
     public function create()
     {
         return view('infrastructure.create');

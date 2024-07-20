@@ -49,29 +49,6 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
-    /* public function userable():MorphTo
-    {
-        return $this->morphTo();
-    }
-
-    public function isGestionnaire(): bool
-    {
-        return $this->userable instanceof Gestionnaire;
-    }
-
-    public function isClient(): bool
-    {
-        return $this->userable instanceof Client;
-    }
-
-    protected static function boot()
-    {
-        parent::boot();
-
-        static::deleting(function ($user) {
-            $user->userable()->delete();
-        });
-    } */
 
     public function isGestionnaire(): bool
     {

@@ -217,7 +217,7 @@
 
     </script>
 
-@vite("resources\css\dropzone.css")
-@vite("resources\js\dropzone.js")
+@vite("resources/css/dropzone.css")
+@vite("resources/js/dropzone.js")
 
 </x-app-layout>
